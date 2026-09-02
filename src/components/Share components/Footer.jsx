@@ -53,7 +53,7 @@ export default function Footer() {
                     <Shield className="w-6 h-6 text-white" />
                 </div>
                 <h2 className="text-2xl font-black tracking-tight text-white">
-                    FC <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-red-500">Boraitola</span>
+                    FCB <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-red-500">Boraitola</span>
                 </h2>
             </div>
             <p className="text-sm text-slate-400 max-w-md mx-auto md:mx-0">

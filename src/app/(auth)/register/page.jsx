@@ -7,6 +7,7 @@ import { authClient, signUp } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
+  
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [imgLink, setImgLink] = useState("");
@@ -16,9 +17,10 @@ export default function RegisterPage() {
   const isEmailInvalid = email.length > 0 && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   
   // URL validation for image link
-  const isImgLinkInvalid = 
+    const isImgLinkInvalid = 
     imgLink.length > 0 && 
-    !imgLink.match(/^(https?:\/\/.*\.(?:png|jpg|jpeg|webp|svg|gif))$/i);
+    !imgLink.startsWith("https://") && 
+    !imgLink.startsWith("http://");
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -27,6 +29,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
     const registerData = Object.fromEntries(formData.entries());
+    console.log(registerData);
 
     try {
       const { data, error } = await signUp.email({
@@ -41,8 +44,9 @@ export default function RegisterPage() {
       }
 
       if (data) {
-        toast.success("Account created successfully! Visca el Barça!");
-        router.push("/");
+        await authClient.signOut();
+        toast.success("Account created successfully! FBC Boraitola!");
+        router.push("/auth/login");
         router.refresh();
       }
     } catch (err) {
@@ -74,13 +78,13 @@ export default function RegisterPage() {
         {/* Header Branding */}
         <div className="text-center mb-6">
           <div className="inline-block px-3 py-1 mb-3 rounded-full bg-blue-600/10 border border-blue-500/30 text-blue-400 text-xs font-semibold tracking-wider uppercase">
-            FCB Boraitala
+            FCB Boraitola
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Join the <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-red-500">FCB</span>
           </h1>
           <p className="text-sm text-slate-400 mt-2">
-            Create an account to connect with FCB Boraitala.
+            Create an account to connect with FCB Boraitola.
           </p>
         </div>
 

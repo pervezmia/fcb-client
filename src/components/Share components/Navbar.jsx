@@ -10,7 +10,7 @@ import {
   Label,
   Description,
 } from "@heroui/react";
-import { Bars, Xmark } from "@gravity-ui/icons";
+import { Bars, Shield, Xmark } from "@gravity-ui/icons";
 import { authClient, useSession } from "@/lib/auth-client";
 
 const navLinks = [
@@ -89,9 +89,14 @@ export default function Navbar() {
 
           {/* ================= LOGO ================= */}
           <Link href="/" className="flex items-center gap-2">
-            <span className="bg-gradient-to-r from-blue-500 to-red-500 bg-clip-text text-xl font-black tracking-wider text-transparent">
-              FCB HUB
-            </span>
+            <div className="flex items-center gap-3 justify-center md:justify-start">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-red-600 flex items-center justify-center border border-white/20">
+                    <Shield className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-2xl font-black tracking-tight text-white">
+                    FCB <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-red-500">Boraitola</span>
+                </h2>
+            </div>
           </Link>
 
           {/* ================= DESKTOP NAV ================= */}
