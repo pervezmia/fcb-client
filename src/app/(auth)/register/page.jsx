@@ -46,7 +46,7 @@ export default function RegisterPage() {
       if (data) {
         await authClient.signOut();
         toast.success("Account created successfully! FBC Boraitola!");
-        router.push("/auth/login");
+        router.push("/login");
         router.refresh();
       }
     } catch (err) {
