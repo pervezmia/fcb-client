@@ -4,72 +4,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { Calendar, ChevronDown, Trophy } from "@gravity-ui/icons";
+import { fixturesData } from "@/lib/api/fixturesData";
 
-export default function FixturesPage() {
+export  default  function  FixturesPage({fixturesData}) {
   const [activeTab, setActiveTab] = useState("fixtures");
   const [selectedMonth, setSelectedMonth] = useState("All");
 
-  // Fake Monthly Fixtures Data
-  const fixturesData = [
-    {
-      month: "September 2026",
-      matches: [
-        {
-          id: 1,
-          date: "SUN 20 SEPT 2026",
-          time: "16:30",
-          homeTeam: "FC Boraitola",
-          homeLogo: "FCB",
-          awayTeam: "Boraitola Tigers",
-          awayLogo: "TIG",
-          status: "Upcoming",
-          matchCentreUrl: "/fixtures/1",
-          ticketsUrl: "/tickets/1",
-        },
-        {
-          id: 2,
-          date: "WED 23 SEPT 2026",
-          time: "20:00",
-          homeTeam: "United XI",
-          homeLogo: "UNI",
-          awayTeam: "FC Boraitola",
-          awayLogo: "FCB",
-          status: "Upcoming",
-          matchCentreUrl: "/fixtures/2",
-          ticketsUrl: "/tickets/2",
-        },
-      ],
-    },
-    {
-      month: "October 2026",
-      matches: [
-        {
-          id: 3,
-          date: "SAT 10 OCT 2026",
-          time: "15:00",
-          homeTeam: "FC Boraitola",
-          homeLogo: "FCB",
-          awayTeam: "Young Star Club",
-          awayLogo: "YSC",
-          status: "Upcoming",
-          matchCentreUrl: "/fixtures/3",
-          ticketsUrl: "/tickets/3",
-        },
-        {
-          id: 4,
-          date: "SAT 24 OCT 2026",
-          time: "17:30",
-          homeTeam: "Greenfield FC",
-          homeLogo: "GRN",
-          awayTeam: "FC Boraitola",
-          awayLogo: "FCB",
-          status: "Upcoming",
-          matchCentreUrl: "/fixtures/4",
-          ticketsUrl: "/tickets/4",
-        },
-      ],
-    },
-  ];
+  
 
   // Filter months if selected
   const filteredFixtures = selectedMonth === "All" 

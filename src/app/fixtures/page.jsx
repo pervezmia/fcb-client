@@ -1,5 +1,6 @@
 import React from "react";
 import FixturesPage from "@/components/fixtures/FixturesPage";
+import {getAllFixturesData } from "@/lib/api/fixturesData";
 
 export const metadata = {
   title: "Fixtures & Results | FCB Hub - FC Boraitola",
@@ -14,10 +15,11 @@ export const metadata = {
   },
 };
 
-export default function FixtureParentPage() {
+export default async function FixtureParentPage() {
+  const fixturesData = await getAllFixturesData();
   return (
     <main className="min-h-screen bg-slate-900">
-      <FixturesPage />
+      <FixturesPage fixturesData={fixturesData}/>
     </main>
   );
 }
