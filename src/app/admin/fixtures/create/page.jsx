@@ -18,17 +18,9 @@ import {
 } from "@heroui/react";
 import { getLocalTimeZone } from "@internationalized/date";
 import { Plus, CircleCheck, CircleXmark } from "@gravity-ui/icons";
+import { createFixtureAction } from "@/lib/action/fixture";
 
 const STATUS_OPTIONS = ["Upcoming", "Live", "Completed", "Postponed", "Cancelled"];
-
-const EMPTY_FORM = {
-  time: "",
-  homeTeam: "",
-  homeLogo: "",
-  awayTeam: "",
-  awayLogo: "",
-  status: "Upcoming",
-};
 
 // Builds "SAT 10 OCT 2026" + "October 2026" from a DatePicker DateValue.
 function formatMatchDate(dateValue) {
@@ -50,52 +42,45 @@ function formatMatchDate(dateValue) {
 
 export default function CreateFixturePage() {
   const [matchDate, setMatchDate] = useState(null);
-  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [status, setStatus] = useState("Upcoming");
   const [submitState, setSubmitState] = useState("idle"); // idle | loading | success | error
   const [submitMessage, setSubmitMessage] = useState("");
-
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!matchDate) return;
 
+    const form = e.currentTarget;
     setSubmitState("loading");
     setSubmitMessage("");
 
+    const formData = new FormData(form);
     const { date, month } = formatMatchDate(matchDate);
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/fixtures`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          month,
-          date,
-          time: formData.time.trim(),
-          homeTeam: formData.homeTeam.trim(),
-          homeLogo: formData.homeLogo.trim().toUpperCase(),
-          awayTeam: formData.awayTeam.trim(),
-          awayLogo: formData.awayLogo.trim().toUpperCase(),
-          status: formData.status,
-        }),
-      });
+    // ডেটা হ্যান্ডেল করার জন্য অতিরিক্ত ফিল্ডগুলো FormData-তে অ্যাপেন্ড করা হলো
+    formData.append("month", month);
+    formData.append("date", date);
+    formData.append("status", status);
+    
+    // ট্রিম এবং ফরম্যাটিং ঠিক রাখা
+    formData.set("time", formData.get("time")?.toString().trim() || "");
+    formData.set("homeTeam", formData.get("homeTeam")?.toString().trim() || "");
+    formData.set("homeLogo", formData.get("homeLogo")?.toString().trim().toUpperCase() || "");
+    formData.set("awayTeam", formData.get("awayTeam")?.toString().trim() || "");
+    formData.set("awayLogo", formData.get("awayLogo")?.toString().trim().toUpperCase() || "");
 
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.message || "Failed to create fixture");
-      }
+    const result = await createFixtureAction(formData);
 
+    if (result.success) {
       setSubmitState("success");
       setSubmitMessage("Fixture created successfully.");
       setMatchDate(null);
-      setFormData(EMPTY_FORM);
-    } catch (err) {
+      setStatus("Upcoming");
+      form.reset();
+    } else {
       setSubmitState("error");
-      setSubmitMessage(err.message || "Something went wrong. Please try again.");
+      setSubmitMessage(result.error);
     }
   };
 
@@ -156,8 +141,6 @@ export default function CreateFixturePage() {
               name="time"
               fullWidth
               isRequired
-              value={formData.time}
-              onChange={(v) => handleChange("time", v)}
             >
               <Label>Kick-off Time</Label>
               <Input placeholder="e.g. 15:00" />
@@ -168,8 +151,8 @@ export default function CreateFixturePage() {
               name="status"
               fullWidth
               isRequired
-              value={formData.status}
-              onChange={(key) => handleChange("status", key)}
+              selectedKey={status}
+              onSelectionChange={(key) => setStatus(key)}
               placeholder="Select match status"
             >
               <Label>Status</Label>
@@ -179,9 +162,9 @@ export default function CreateFixturePage() {
               </Select.Trigger>
               <Select.Popover>
                 <ListBox>
-                  {STATUS_OPTIONS.map((status) => (
-                    <ListBox.Item key={status} id={status}>
-                      {status}
+                  {STATUS_OPTIONS.map((opt) => (
+                    <ListBox.Item key={opt} id={opt}>
+                      {opt}
                     </ListBox.Item>
                   ))}
                 </ListBox>
@@ -198,8 +181,6 @@ export default function CreateFixturePage() {
                 name="homeTeam"
                 fullWidth
                 isRequired
-                value={formData.homeTeam}
-                onChange={(v) => handleChange("homeTeam", v)}
               >
                 <Label>Home Team</Label>
                 <Input placeholder="e.g. FC Boraitola" />
@@ -210,8 +191,6 @@ export default function CreateFixturePage() {
                 name="homeLogo"
                 fullWidth
                 isRequired
-                value={formData.homeLogo}
-                onChange={(v) => handleChange("homeLogo", v)}
               >
                 <Label>Home Logo Code</Label>
                 <Input placeholder="e.g. FCB" maxLength={5} />
@@ -225,8 +204,6 @@ export default function CreateFixturePage() {
                 name="awayTeam"
                 fullWidth
                 isRequired
-                value={formData.awayTeam}
-                onChange={(v) => handleChange("awayTeam", v)}
               >
                 <Label>Away Team</Label>
                 <Input placeholder="e.g. Young Star Club" />
@@ -237,8 +214,6 @@ export default function CreateFixturePage() {
                 name="awayLogo"
                 fullWidth
                 isRequired
-                value={formData.awayLogo}
-                onChange={(v) => handleChange("awayLogo", v)}
               >
                 <Label>Away Logo Code</Label>
                 <Input placeholder="e.g. YSC" maxLength={5} />
