@@ -1,5 +1,4 @@
 import React from "react";
-import PlayersPageClient from "@/components/players/PlayersPage";
 import PlayersPage from "@/components/players/PlayersPage";
 import { getAllPlayers } from "@/lib/api/player";
 
