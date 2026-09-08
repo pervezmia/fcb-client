@@ -1,2 +1,9 @@
 @import "tailwindcss";
 @import "@heroui/styles"; 
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: white !important;
+  caret-color: white;
+}

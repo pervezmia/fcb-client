@@ -22,16 +22,18 @@ import {
 } from "lucide-react";
 
 import { createPlayer } from "@/lib/action/player/createPlayer";
+import { useRouter } from "next/navigation";
 
 export default function CreatePlayerForm() {
+  const router = useRouter();
   const [submitted, setSubmitted] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const positions = [
-    { key: "forward", label: "Forward (FW)" },
-    { key: "midfielder", label: "Midfielder (MF)" },
-    { key: "defender", label: "Defender (DF)" },
-    { key: "goalkeeper", label: "Goalkeeper (GK)" },
+    { key: "Forward", label: "Forward (FW)" },
+    { key: "Midfielder", label: "Midfielder (MF)" },
+    { key: "Defender", label: "Defender (DF)" },
+    { key: "Goalkeeper", label: "Goalkeeper (GK)" },
   ];
 
   const onSubmit = async (e) => {
@@ -47,8 +49,10 @@ export default function CreatePlayerForm() {
       setIsSubmitting(true);
 
       const result = await createPlayer(data);
+      
 
       console.log("Server Response:", result);
+      router.push("/players")
 
       setSubmitted(data);
     } catch (error) {
@@ -61,7 +65,6 @@ export default function CreatePlayerForm() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-slate-950 px-4 py-10">
       <div className="w-full max-w-2xl rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl sm:p-8">
-
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-blue-500/10">
@@ -73,8 +76,7 @@ export default function CreatePlayerForm() {
           </h1>
 
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            Fill in the information below to register a new player for the
-            club.
+            Fill in the information below to register a new player for the club.
           </p>
         </div>
 
@@ -85,12 +87,7 @@ export default function CreatePlayerForm() {
           className="flex w-full flex-col gap-5"
         >
           {/* Player Name */}
-          <TextField
-            name="name"
-            isRequired
-            fullWidth
-            className={"text-white"}
-          >
+          <TextField name="name" isRequired fullWidth>
             <Label className="mb-2 text-sm font-medium text-slate-200">
               Player Name
             </Label>
@@ -107,18 +104,17 @@ export default function CreatePlayerForm() {
               <InputGroup.Input
                 type="text"
                 placeholder="e.g. Lionel Messi"
-                className="text-white placeholder:text-slate-500"
+                autoComplete="name"
+                className="!text-white
+  placeholder:!text-slate-500
+  autofill:!text-white
+  autofill:[-webkit-text-fill-color:white]"
               />
             </InputGroup>
           </TextField>
 
           {/* Email */}
-          <TextField
-            name="email"
-            type="email"
-            isRequired
-            fullWidth
-          >
+          <TextField name="email" type="email" isRequired fullWidth>
             <Label className="mb-2 text-sm font-medium text-slate-200">
               Email Address
             </Label>
@@ -135,21 +131,21 @@ export default function CreatePlayerForm() {
               <InputGroup.Input
                 type="email"
                 placeholder="player@example.com"
-                className="text-white placeholder:text-slate-500"
+                autoComplete="email"
+                className="
+        !text-white
+        placeholder:!text-slate-500
+        autofill:!text-white
+        autofill:[-webkit-text-fill-color:white]
+      "
               />
             </InputGroup>
           </TextField>
 
           {/* Jersey Number + Age */}
           <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
-
             {/* Jersey Number */}
-            <TextField
-              name="jerseyNumber"
-              type="number"
-              isRequired
-              fullWidth
-            >
+            <TextField name="jerseyNumber" type="number" isRequired fullWidth>
               <Label className="mb-2 text-sm font-medium text-slate-200">
                 Jersey Number
               </Label>
@@ -172,12 +168,7 @@ export default function CreatePlayerForm() {
             </TextField>
 
             {/* Age */}
-            <TextField
-              name="age"
-              type="number"
-              isRequired
-              fullWidth
-            >
+            <TextField name="age" type="number" isRequired fullWidth>
               <Label className="mb-2 text-sm font-medium text-slate-200">
                 Age
               </Label>
@@ -198,7 +189,6 @@ export default function CreatePlayerForm() {
                 />
               </InputGroup>
             </TextField>
-
           </div>
 
           {/* Position */}
@@ -252,12 +242,122 @@ export default function CreatePlayerForm() {
             </Select.Popover>
           </Select>
 
-          {/* Profile Image URL */}
-          <TextField
-            name="imageUrl"
-            type="url"
-            fullWidth
+          {/* Team Select */}
+
+          <Select name="team" placeholder="Select team" className="w-full">
+            <Label className="mb-2 text-sm font-medium text-slate-200">
+              Team
+            </Label>
+
+            <Select.Trigger
+              className="
+      w-full rounded-xl
+      border border-slate-700
+      bg-slate-800/60
+      px-4 py-3
+      text-white
+    "
+            >
+              <Select.Value />
+            </Select.Trigger>
+
+            <Select.Popover
+              className="
+      rounded-xl
+      border border-slate-700
+      bg-slate-900
+      p-1
+      shadow-2xl
+    "
+            >
+              <ListBox>
+                <ListBoxItem
+                  id="fc-boraitola"
+                  className="cursor-pointer rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white"
+                >
+                  FC Boraitola
+                </ListBoxItem>
+
+                <ListBoxItem
+                  id="boraitola-tigers"
+                  className="cursor-pointer rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white"
+                >
+                  Boraitola Tigers
+                </ListBoxItem>
+              </ListBox>
+            </Select.Popover>
+          </Select>
+
+          {/* Nationality Select */}
+
+          <Select
+            name="nationality"
+            placeholder="Select nationality"
+            className="w-full"
           >
+            <Label className="mb-2 text-sm font-medium text-slate-200">
+              Nationality
+            </Label>
+
+            <Select.Trigger
+              className="
+      w-full rounded-xl
+      border border-slate-700
+      bg-slate-800/60
+      px-4 py-3
+      text-white
+    "
+            >
+              <Select.Value />
+            </Select.Trigger>
+
+            <Select.Popover
+              className="
+      rounded-xl
+      border border-slate-700
+      bg-slate-900
+      p-1
+      shadow-2xl
+    "
+            >
+              <ListBox>
+                <ListBoxItem
+                  id="bangladeshi"
+                  className="cursor-pointer rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white"
+                >
+                  Bangladeshi
+                </ListBoxItem>
+              </ListBox>
+            </Select.Popover>
+          </Select>
+
+          {/* Joined Date with FCB */}
+          <TextField name="joinedDate" type="date" isRequired fullWidth>
+            <Label className="mb-2 text-sm font-medium text-slate-200">
+              Joined Date with FCB
+            </Label>
+
+            <InputGroup
+              fullWidth
+              variant="secondary"
+              className="border border-slate-700 bg-slate-800/60"
+            >
+              <InputGroup.Prefix>
+                <Calendar className="size-4 text-slate-400" />
+              </InputGroup.Prefix>
+
+              <InputGroup.Input
+                type="date"
+                className="
+        !text-white
+        [color-scheme:dark]
+      "
+              />
+            </InputGroup>
+          </TextField>
+
+          {/* Profile Image URL */}
+          <TextField name="imageUrl" type="url" fullWidth>
             <Label className="mb-2 text-sm font-medium text-slate-200">
               Profile Image URL
             </Label>
@@ -274,6 +374,23 @@ export default function CreatePlayerForm() {
               <InputGroup.Input
                 type="url"
                 placeholder="https://example.com/photo.jpg"
+                className="text-white placeholder:text-slate-500"
+              />
+            </InputGroup>
+          </TextField>
+
+          <TextField name="bio" fullWidth>
+            <Label className="mb-2 text-sm font-medium text-slate-200">
+              Player Bio
+            </Label>
+
+            <InputGroup
+              fullWidth
+              variant="secondary"
+              className="border border-slate-700 bg-slate-800/60"
+            >
+              <InputGroup.Input
+                placeholder="Write something about the player..."
                 className="text-white placeholder:text-slate-500"
               />
             </InputGroup>
@@ -316,4 +433,3 @@ export default function CreatePlayerForm() {
     </div>
   );
 }
-
