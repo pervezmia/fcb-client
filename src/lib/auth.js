@@ -37,5 +37,14 @@ export const auth = betterAuth({
     emailAndPassword: { 
     enabled: true, 
   }, 
+  user: {
+        additionalFields: {
+            role: {
+                type: "string",  
+                defaultValue: "player", // Default role for new signups
+                input: false,
+            }
+        }
+    }
   
 });

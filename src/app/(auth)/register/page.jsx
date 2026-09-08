@@ -34,6 +34,7 @@ export default function RegisterPage() {
     try {
       const { data, error } = await signUp.email({
         ...registerData,
+        
         // callbackURL: "/",
       });
 
