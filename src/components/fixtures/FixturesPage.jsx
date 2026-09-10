@@ -163,7 +163,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+// import Link from "next/link";
 import { Calendar } from "@gravity-ui/icons";
 import {
   Select,
@@ -171,6 +171,7 @@ import {
   Label,
 } from "@heroui/react";
 import { motion } from "framer-motion";
+import { containerVariants, itemVariants } from "@/lib/motion/motion";
 
 // Dynamically generate months from January 2026 up to the current month (September 2026)
 function generateAvailableMonths() {
@@ -189,18 +190,18 @@ function generateAvailableMonths() {
 }
 
 // Animation variants: cards fade in and slide up, staggered one after another
-const containerVariants = {
-  hidden: { opacity: 1 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-  },
-};
+// const containerVariants = {
+//   hidden: { opacity: 1 },
+//   show: {
+//     opacity: 1,
+//     transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+//   },
+// };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
-};
+// const itemVariants = {
+//   hidden: { opacity: 0, y: 24 },
+//   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+// };
 
 export default function FixturesPage({ fixturesData = [] }) {
   const [activeTab, setActiveTab] = useState("fixtures");

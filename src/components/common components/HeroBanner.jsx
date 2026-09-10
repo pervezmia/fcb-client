@@ -1,9 +1,11 @@
-"use client";
+
 
 import React from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { Calendar, Shield, Persons } from "@gravity-ui/icons";
+
+import TypewriterEffect from "./TypewriterEffect";
 
 export default function HeroBanner() {
   return (
@@ -23,14 +25,16 @@ export default function HeroBanner() {
               <Shield className="w-4 h-4 text-red-500" />
               Official FCB Hub & Community
             </div>
+            
 
             {/* Main Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+            {/* <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
               The Ultimate Home for <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-400 to-red-500">
                 FC Boraitola Fans & Players
               </span>
-            </h1>
+            </h1> */}
+            <TypewriterEffect></TypewriterEffect>
 
             {/* Description */}
             <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto lg:mx-0">
