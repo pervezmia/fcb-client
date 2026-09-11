@@ -57,7 +57,7 @@ export default function PlayersPage({ players }) {
         <div className="max-w-7xl mx-auto space-y-4">
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-8 bg-blue-600 rounded-full"></span>
-            <h1 className="text-3xl font-black tracking-tight uppercase text-white">Teams & Squad</h1>
+            <h1 className="text-3xl font-black tracking-tight uppercase text-white">Teams & Squad __{players?.length || 0}</h1>
           </div>
           <p className="text-sm text-slate-400">Explore the official player rosters and categories of FC Boraitola.</p>
 

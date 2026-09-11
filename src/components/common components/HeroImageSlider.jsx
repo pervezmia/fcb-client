@@ -35,7 +35,7 @@ export default function HeroImageSlider() {
         className="w-full h-[380px] sm:h-[480px] lg:h-[550px]"
       >
         {images.map((img, index) => (
-          <SwiperSlide key={index} className="relative w-full h-full flex items-center justify-center bg-slate-950">
+          <SwiperSlide key={index} className="relative  w-full h-full flex items-center justify-center bg-slate-950">
             {/* ব্যাকগ্রাউন্ডে একটা ব্লার ইফেক্ট দেওয়া যাতে চারপাশে খালি জায়গায় জঘন্য না লাগে */}
             <div className="absolute inset-0 opacity-30 filter blur-xl scale-110 pointer-events-none">
               <Image
@@ -53,7 +53,7 @@ export default function HeroImageSlider() {
                 alt={img.alt}
                 fill
                 sizes="(max-width: 1280px) 100vw, 1280px"
-                className="object-contain drop-shadow-2xl"
+                className="object-cover sm:object-contain drop-shadow-2xl"
                 priority={index === 0}
                 unoptimized={true} // external link এর ক্ষেত্রে কোয়ালিটি লস ঠেকাতে unoptimized দিতে পারো
               />
