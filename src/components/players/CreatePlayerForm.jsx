@@ -10,6 +10,7 @@ import {
   Select,
   ListBox,
   ListBoxItem,
+  toast,
 } from "@heroui/react";
 
 import {
@@ -40,23 +41,25 @@ export default function CreatePlayerForm() {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-
     const data = Object.fromEntries(formData.entries());
-
-    console.log("Client Data:", data);
 
     try {
       setIsSubmitting(true);
 
       const result = await createPlayer(data);
-      
 
-      console.log("Server Response:", result);
-      router.push("/players")
+      // result.success না চেক করলে error হলেও silently redirect হয়ে
+      // যেত — এখন toast দিয়ে exact কারণ দেখানো হচ্ছে
+      if (!result?.success) {
+        toast.danger(result?.error || "Failed to create player");
+        return;
+      }
 
+      toast.success("Player created successfully!");
       setSubmitted(data);
+      router.push("/players");
     } catch (error) {
-      console.error("Failed to create player:", error);
+      toast.danger(error.message || "Something went wrong.");
     } finally {
       setIsSubmitting(false);
     }

@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input, Button, Label } from "@heroui/react";
-import { Save, Calendar, FileText, User, Image as ImageIcon } from "lucide-react";
+import { Input, Button, Label, toast } from "@heroui/react";
+import { Save } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { updatePlayer } from "@/lib/action/player/updatePlayer";
 
 export default function PlayerProfileForm({ initialData }) {
+  const router = useRouter();
   const [playerData, setPlayerData] = useState(initialData);
   const [loading, setLoading] = useState(false);
 
@@ -17,13 +20,23 @@ export default function PlayerProfileForm({ initialData }) {
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
-    console.log("Updated Player Data:", playerData);
-    
-    setTimeout(() => {
+
+    try {
+      const result = await updatePlayer(playerData);
+
+      if (!result?.success) {
+        toast.danger(result?.error || "Failed to update profile");
+        return;
+      }
+
+      toast.success("Profile updated successfully!");
+      router.refresh();    
+      router.push("/dashboard/player");
+    } catch (error) {
+      toast.danger(error.message || "Something went wrong.");
+    } finally {
       setLoading(false);
-      alert("Profile updated successfully!");
-    }, 1000);
+    }
   };
 
   return (
@@ -38,7 +51,7 @@ export default function PlayerProfileForm({ initialData }) {
       <div className="flex flex-col items-center mb-8">
         <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-blue-600 shadow-md mb-3">
           <Image
-            src={playerData.photo || "https://via.placeholder.com/150"}
+            src={playerData.imageUrl || "https://via.placeholder.com/150"}
             alt={playerData.name || "Player Profile"}
             fill
             sizes="112px"
@@ -90,13 +103,13 @@ export default function PlayerProfileForm({ initialData }) {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="photo" className="text-sm font-medium text-slate-300">
+          <Label htmlFor="imageUrl" className="text-sm font-medium text-slate-300">
             Profile Photo URL
           </Label>
           <Input
-            id="photo"
-            name="photo"
-            value={playerData.photo}
+            id="imageUrl"
+            name="imageUrl"
+            value={playerData.imageUrl}
             onChange={handleChange}
             variant="bordered"
             placeholder="https://images.unsplash.com/..."

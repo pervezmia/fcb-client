@@ -125,17 +125,17 @@ export default function PlayersPage({ players }) {
                       whileHover={{ y: -4 }}
                       className="bg-slate-900/80 backdrop-blur-md border border-slate-800/80 rounded-2xl overflow-hidden shadow-lg flex flex-col group transition-[border-color,box-shadow] duration-300 hover:border-blue-500/40 hover:shadow-blue-500/10"
                     >
-                      {/* Card Header (Photo Container with Jersey Number) */}
+                      {/* Card Header (imageUrl Container with Jersey Number) */}
                       <div className="relative w-full aspect-[4/5] bg-slate-800 overflow-hidden flex items-end justify-center">
                         {/* Big Jersey Number Badge */}
                         <span className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md text-white px-2.5 py-1 rounded-lg text-sm sm:text-base font-black tracking-tighter z-10 border border-slate-700/60 shadow-md">
                           #{player.jerseyNumber ?? player.number ?? "—"}
                         </span>
 
-                        {/* Player Photo */}
-                        {(player.photo || player.image) ? (
+                        {/* Player imageUrl */}
+                        {(player.imageUrl || player.image) ? (
                           <Image
-                            src={player.photo || player.image}
+                            src={player.imageUrl || player.image}
                             alt={player.name || "Player"}
                             fill
                             sizes="(max-width: 768px) 50vw, 25vw"

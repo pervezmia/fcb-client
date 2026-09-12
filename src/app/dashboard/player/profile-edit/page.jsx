@@ -1,12 +1,12 @@
-import Profile from "@/components/players/Profile";
+import PlayerProfileForm from "@/components/dashboard/player/PlayerProfileForm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { getTokenServer } from "@/lib/action/player/gettokenserver";
 import { backendURL } from "@/lib/core/core";
+import { getTokenServer } from "@/lib/action/player/gettokenserver";
 
 export const metadata = {
   title: "Player Profile - FCB Management",
-  description: "View your player profile information.",
+  description: "Manage your player profile information, name, and photo.",
 };
 
 function StatusMessage({ children }) {
@@ -29,14 +29,18 @@ export default async function PlayerProfilePage() {
   const token = await getTokenServer();
 
   if (!token) {
+    // এই message দেখলে বুঝবে সমস্যা auth token আনাতেই —
+    // NEXT_PUBLIC_APP_URL ঠিক আছে কিনা, better-auth jwt plugin
+    // enabled আছে কিনা, সেটা চেক করো
     return (
       <StatusMessage>
-        Could not verify your session. Please sign in again.
+        Could not verify your session (auth token missing). Check
+        NEXT_PUBLIC_APP_URL and that the JWT plugin is enabled.
       </StatusMessage>
     );
   }
 
-  let player = null;
+  let initialPlayerData = null;
   let fetchErrorDetail = null;
 
   try {
@@ -48,8 +52,9 @@ export default async function PlayerProfilePage() {
     });
 
     if (res.ok) {
-      player = await res.json();
+      initialPlayerData = await res.json();
     } else {
+      // এই message দেখলে বুঝবে সমস্যা backend side-এ (401/404/500)
       const body = await res.json().catch(() => ({}));
       fetchErrorDetail = `Backend responded ${res.status}: ${
         body.error || "no error message"
@@ -59,7 +64,7 @@ export default async function PlayerProfilePage() {
     fetchErrorDetail = `Fetch failed: ${error.message}`;
   }
 
-  if (!player) {
+  if (!initialPlayerData) {
     return (
       <StatusMessage>
         No player profile found yet. Create one to get started.
@@ -73,10 +78,8 @@ export default async function PlayerProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-5xl bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
-        <Profile player={player} />
-      </div>
+    <div className="min-h-[85vh] flex items-center justify-center p-4">
+      <PlayerProfileForm initialData={initialPlayerData} />
     </div>
   );
 }

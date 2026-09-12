@@ -78,6 +78,12 @@ export default function DashboardNavbar({ session }) {
                 >
                   Create Player
                 </Link>
+                <Link
+                  href="/dashboard/player/profile-edit"
+                  className="px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white font-medium text-sm transition"
+                >
+                  Edit player
+                </Link>
               </nav>
             </div>
 
