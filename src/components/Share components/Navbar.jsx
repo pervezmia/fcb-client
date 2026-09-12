@@ -423,7 +423,7 @@ const navLinks = [
   },
   {
     name: "Dashboard",
-    href: "/dashboard",
+    href: "/dashboard/player",
   },
 ];
 
@@ -444,11 +444,15 @@ const fcbTeams = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  
   const router = useRouter();
 
   const { data: session, isPending } = useSession();
 
   const [isOpen, setIsOpen] = useState(false);
+
+  console.log(pathname);
+  
 
   // Menu open থাকলে body scroll lock
   useEffect(() => {
@@ -465,6 +469,9 @@ export default function Navbar() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  if(pathname.includes("dashboard")){
+    return null;
+  }
   // Active route check
   const isActive = (href) => {
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -589,7 +596,7 @@ export default function Navbar() {
                     <Dropdown.Item
                       key="user-info"
                       textValue="User Info"
-                      className="mb-1 border-b border-slate-800 pb-2"
+                      className="mb-1 flex flex-col  border-b border-slate-800 pb-2"
                     >
                       <Label className="font-semibold text-white">
                         {session.user?.name}
@@ -607,7 +614,7 @@ export default function Navbar() {
                       className="rounded-lg hover:bg-slate-800"
                     >
                       <Link
-                        href="/profile"
+                        href="dashboard/player"
                         className="block w-full py-1 text-slate-300 hover:text-blue-400"
                       >
                         Profile
@@ -746,7 +753,7 @@ export default function Navbar() {
 
                   {/* Profile */}
                   <Link
-                    href="/profile"
+                    href="dashboard/player"
                     onClick={() => setIsOpen(false)}
                     className="w-full rounded-xl bg-slate-800 py-3 text-center text-base font-medium text-white"
                   >

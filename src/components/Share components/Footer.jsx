@@ -4,9 +4,14 @@ import React from "react";
 import Link from "next/link";
 import { Link as HeroUILink } from "@heroui/react";
 import { Shield } from "@gravity-ui/icons";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+  if(pathname.includes("dashboard")){
+    return null
+  }
 
   const navLinks = [
     { name: "Home", href: "/" },

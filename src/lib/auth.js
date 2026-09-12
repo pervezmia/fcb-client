@@ -43,6 +43,9 @@ export const auth = betterAuth({
                 type: "string",  
                 defaultValue: "player", // Default role for new signups
                 input: false,
+            },
+            plan: {
+              defaultValue: "free"
             }
         }
     }
