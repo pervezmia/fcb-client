@@ -264,7 +264,7 @@ export default function FixturesPage({ fixturesData = [] }) {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-10">
         
         {/* Filter Bar using HeroUI Select Component */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
@@ -300,7 +300,7 @@ export default function FixturesPage({ fixturesData = [] }) {
               </Select.Popover>
             </Select>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Fixtures Groups by Month */}
         <motion.div

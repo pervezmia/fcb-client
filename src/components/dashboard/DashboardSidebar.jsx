@@ -25,7 +25,7 @@ export default async function DashboardSidebar() {
           href="/dashboard/player"
           className="px-4 py-2.5 rounded-xl bg-blue-600 text-white font-medium text-sm transition"
         >
-          Overview
+          Profile
         </Link>
         <Link
           href="/dashboard/player/create"

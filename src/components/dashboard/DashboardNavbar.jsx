@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Home } from "lucide-react";
+import Image from "next/image";
 
 export default function DashboardNavbar({ session }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,9 +37,19 @@ export default function DashboardNavbar({ session }) {
             <span>Home</span>
           </Link>
 
-          {/* User Avatar */}
-          <div className="w-9 h-9 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">
-            {session?.user?.image ? session.user.name.charAt(0).toUpperCase() : "U"}
+          {/* User Avatar / Profile Image Fix */}
+          <div className="relative w-9 h-9 rounded-full overflow-hidden bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">
+            {session?.user?.image ? (
+              <Image
+                src={session.user.image}
+                alt={session?.user?.name || "User Profile"}
+                fill
+                sizes="36px"
+                className="object-cover"
+              />
+            ) : (
+              <span>{session?.user?.name ? session.user.name.charAt(0).toUpperCase() : "U"}</span>
+            )}
           </div>
         </div>
       </header>
@@ -70,7 +81,7 @@ export default function DashboardNavbar({ session }) {
                   href="/dashboard/player"
                   className="px-4 py-2.5 rounded-xl bg-blue-600 text-white font-medium text-sm transition"
                 >
-                  Overview
+                  Profile
                 </Link>
                 <Link
                   href="/dashboard/player/create"
@@ -78,12 +89,12 @@ export default function DashboardNavbar({ session }) {
                 >
                   Create Player
                 </Link>
-                <Link
+                {/* <Link
                   href="/dashboard/player/profile-edit"
                   className="px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white font-medium text-sm transition"
                 >
                   Edit player
-                </Link>
+                </Link> */}
               </nav>
             </div>
 

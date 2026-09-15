@@ -436,10 +436,7 @@ const fcbTeams = [
     name: "Boraitola Tigers",
     href: "/fcb-teams/boraitola-tigers",
   },
-  {
-    name: "Club",
-    href: "/fcb-teams/club",
-  },
+  
 ];
 
 export default function Navbar() {
@@ -451,7 +448,7 @@ export default function Navbar() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(pathname);
+  // console.log(pathname);
   
 
   // Menu open থাকলে body scroll lock
