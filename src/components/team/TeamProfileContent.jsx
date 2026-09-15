@@ -9,7 +9,7 @@ export default function TeamProfileContent() {
   return (
     <div className="w-full">
       {/* Hero Banner Section */}
-      <div className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
+      <div className="relative w-full h-[45vh] sm:h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
         {/* Background Banner Image with Zoom/Scale Effect */}
         <div className="absolute inset-0 z-0 transform-gpu transition-transform duration-1000 hover:scale-105">
           <Image
@@ -51,7 +51,8 @@ export default function TeamProfileContent() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-slate-300 text-sm sm:text-lg max-w-2xl mx-auto font-medium"
           >
-            The ultimate pillar and most senior competitive team of our club. Built on discipline, resilience, and a legacy of unmatched passion.
+            The ultimate pillar and most senior competitive team of our club.
+            Built on discipline, resilience, and a legacy of unmatched passion.
           </motion.p>
         </div>
       </div>
@@ -59,7 +60,6 @@ export default function TeamProfileContent() {
       {/* Team Statistics & Info Section */}
       <section className="max-w-7xl mx-auto px-4 py-16 -mt-20 relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
           {/* Stat Card 1 */}
           <motion.div
             whileHover={{ y: -8 }}
@@ -70,8 +70,12 @@ export default function TeamProfileContent() {
               <Trophy size={28} />
             </div>
             <div>
-              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Status</p>
-              <h3 className="text-xl font-bold text-white">Senior Tier-1 Squad</h3>
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                Status
+              </p>
+              <h3 className="text-xl font-bold text-white">
+                Senior Tier-1 Squad
+              </h3>
             </div>
           </motion.div>
 
@@ -85,7 +89,9 @@ export default function TeamProfileContent() {
               <Users size={28} />
             </div>
             <div>
-              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Squad Strength</p>
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                Squad Strength
+              </p>
               <h3 className="text-xl font-bold text-white">Elite 25 Players</h3>
             </div>
           </motion.div>
@@ -100,11 +106,14 @@ export default function TeamProfileContent() {
               <Award size={28} />
             </div>
             <div>
-              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Legacy</p>
-              <h3 className="text-xl font-bold text-white">First Senior Team</h3>
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                Legacy
+              </p>
+              <h3 className="text-xl font-bold text-white">
+                First Senior Team
+              </h3>
             </div>
           </motion.div>
-
         </div>
       </section>
 
@@ -112,14 +121,17 @@ export default function TeamProfileContent() {
       <section className="max-w-5xl mx-auto px-4 py-12">
         <div className="bg-gradient-to-br from-slate-900 to-slate-900/60 border border-slate-800/80 rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-          
+
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 flex items-center gap-3">
             <span className="w-2.5 h-8 bg-blue-600 rounded-full inline-block" />
             About the Senior Squad
           </h2>
-          
+
           <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-6">
-            FC Boraitola stands as the core identity of our entire sports movement. Being the first and most senior team, it shoulders the responsibility of setting high competitive standards, leadership on and off the pitch, and inspiring younger generations of athletes.
+            FC Boraitola stands as the core identity of our entire sports
+            movement. Being the first and most senior team, it shoulders the
+            responsibility of setting high competitive standards, leadership on
+            and off the pitch, and inspiring younger generations of athletes.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-slate-300 text-sm">

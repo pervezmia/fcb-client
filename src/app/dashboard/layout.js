@@ -16,10 +16,13 @@ export default async function DashboardLayout({ children }) {
     redirect("/signin");
   }
 
+  // ইউজার সেশন থেকে রোল বের করা (ডিফল্টভাবে "player" ধরতে পারো)
+  const userRole = session?.user?.role || "player";
+
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-100">
       {/* বড় স্ক্রিনের জন্য সাইডবার */}
-      <DashboardSidebar />
+      <DashboardSidebar userRole={userRole} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* ন্যাভবার (যেখানে মোবাইল মেনু বা হ্যামবার্গার টগল হ্যান্ডেল হবে) */}

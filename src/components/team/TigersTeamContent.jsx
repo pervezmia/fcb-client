@@ -8,8 +8,7 @@ import { Flame, Trophy, Users, Zap, ChevronRight } from "lucide-react";
 export default function TigersTeamContent() {
   return (
     <div className="w-full">
-      {/* Hero Banner Section */}
-      <div className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
+      <div className="relative w-full h-[45vh] sm:h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
         {/* Background Banner Image with Zoom/Scale Effect */}
         <div className="absolute inset-0 z-0 transform-gpu transition-transform duration-1000 hover:scale-105">
           <Image
@@ -18,7 +17,7 @@ export default function TigersTeamContent() {
             fill
             priority
             sizes="100vw"
-            className="object-cover object-center brightness-75"
+            className="object-cover object-center brightness-75 sm:object-cover object-center"
           />
           {/* Gradient Overlay for Readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />

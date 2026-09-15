@@ -4,9 +4,15 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Home } from "lucide-react";
 import Image from "next/image";
+import { navLinksAdmin, navLinksPlayer } from "./dashboardLinks";
 
 export default function DashboardNavbar({ session }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // সেশন থেকে ইউজারের রোল বের করে নেওয়া (ডিফল্ট player)
+  const userRole = session?.user?.role || "player";
+  const currentMobileLinks = userRole === "admin" ? navLinksAdmin : navLinksPlayer;
+
 
   return (
     <>
@@ -28,7 +34,7 @@ export default function DashboardNavbar({ session }) {
 
         {/* Right Section: Home Button & User Profile */}
         <div className="flex items-center gap-3">
-          {/* হোম পেজে যাওয়ার বাটন */}
+          {/* হোম পেজে যাওয়ার বাটন */}
           <Link
             href="/"
             className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-slate-700 hover:border-blue-500/50 bg-slate-800/40 hover:bg-blue-600/10 text-slate-300 hover:text-white text-xs font-medium transition duration-200"
@@ -76,29 +82,21 @@ export default function DashboardNavbar({ session }) {
                 </button>
               </div>
 
+              {/* ডাইনামিক মোবাইল মেনু রেন্ডারিং */}
               <nav className="flex flex-col gap-2" onClick={() => setMobileMenuOpen(false)}>
-                <Link
-                  href="/dashboard/player"
-                  className="px-4 py-2.5 rounded-xl bg-blue-600 text-white font-medium text-sm transition"
-                >
-                  Profile
-                </Link>
-                <Link
-                  href="/dashboard/player/create"
-                  className="px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white font-medium text-sm transition"
-                >
-                  Create Player
-                </Link>
-                {/* <Link
-                  href="/dashboard/player/profile-edit"
-                  className="px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white font-medium text-sm transition"
-                >
-                  Edit player
-                </Link> */}
+                {currentMobileLinks.map((link, index) => (
+                  <Link
+                    key={index}
+                    href={link.href}
+                    className="px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white font-medium text-sm transition"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
               </nav>
             </div>
 
-            {/* মোবাইল ড্রয়ারের নিচেও একটি হোম বাটন যুক্ত করে দেওয়া হলো */}
+            {/* মোবাইল ড্রয়ারের নিচেও একটি হোম বাটন যুক্ত করে দেওয়া হলো */}
             <div className="pt-4 border-t border-slate-800">
               <Link
                 href="/"

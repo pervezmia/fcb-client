@@ -118,10 +118,10 @@ export default function CreateFixtureForm() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-foreground">
+        <h1 className="text-2xl font-semibold text-white">
           Create Fixture
         </h1>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-sm text-slate-400">
           Add a new match to the FC Boraitola fixtures list.
         </p>
       </div>
@@ -132,7 +132,7 @@ export default function CreateFixtureForm() {
         onSubmit={handleSubmit}
       >
         <Fieldset>
-          <Fieldset.Legend>Match Details</Fieldset.Legend>
+          <Fieldset.Legend className="text-white font-medium text-lg mb-2">Match Details</Fieldset.Legend>
           <Fieldset.Group className="grid gap-4">
             <DatePicker
               name="date"
@@ -140,39 +140,39 @@ export default function CreateFixtureForm() {
               value={matchDate}
               onChange={setMatchDate}
             >
-              <Label>Match Date</Label>
-              <DateField.Group>
+              <Label className="text-slate-100 font-medium">Match Date</Label>
+              <DateField.Group className="bg-slate-900 border-slate-700 text-white">
                 <DateField.Input>
-                  {(segment) => <DateField.Segment segment={segment} />}
+                  {(segment) => <DateField.Segment segment={segment} className="text-white" />}
                 </DateField.Input>
                 <DateField.Suffix>
-                  <DatePicker.Trigger>
+                  <DatePicker.Trigger className="text-slate-300">
                     <DatePicker.TriggerIndicator />
                   </DatePicker.Trigger>
                 </DateField.Suffix>
               </DateField.Group>
-              <Description>
+              <Description className="text-slate-400 text-xs">
                 Also sets the month this fixture is grouped under.
               </Description>
-              <FieldError />
+              <FieldError className="text-red-400 text-xs" />
               <DatePicker.Popover>
-                <Calendar aria-label="Choose match date">
+                <Calendar aria-label="Choose match date" className="bg-slate-900 text-white border-slate-700">
                   <Calendar.Header>
-                    <Calendar.YearPickerTrigger>
+                    <Calendar.YearPickerTrigger className="text-white">
                       <Calendar.YearPickerTriggerHeading />
                       <Calendar.YearPickerTriggerIndicator />
                     </Calendar.YearPickerTrigger>
-                    <Calendar.NavButton slot="previous" />
-                    <Calendar.NavButton slot="next" />
+                    <Calendar.NavButton slot="previous" className="text-white" />
+                    <Calendar.NavButton slot="next" className="text-white" />
                   </Calendar.Header>
                   <Calendar.Grid>
                     <Calendar.GridHeader>
                       {(day) => (
-                        <Calendar.HeaderCell>{day}</Calendar.HeaderCell>
+                        <Calendar.HeaderCell className="text-slate-400">{day}</Calendar.HeaderCell>
                       )}
                     </Calendar.GridHeader>
                     <Calendar.GridBody>
-                      {(date) => <Calendar.Cell date={date} />}
+                      {(date) => <Calendar.Cell date={date} className="text-white data-[selected]:bg-primary data-[selected]:text-white" />}
                     </Calendar.GridBody>
                   </Calendar.Grid>
                 </Calendar>
@@ -180,14 +180,15 @@ export default function CreateFixtureForm() {
             </DatePicker>
 
             <TextField name="time" fullWidth isRequired>
-              <Label>Kick-off Time</Label>
-              <Input placeholder="e.g. 15:00" />
-              <FieldError />
+              <Label className="text-slate-100 font-medium">Kick-off Time</Label>
+              <Input placeholder="e.g. 15:00" className="text-white placeholder:text-slate-500" />
+              <FieldError className="text-red-400 text-xs" />
             </TextField>
+            
             <TextField name="matchCenterUrl" fullWidth isRequired>
-              <Label>Match Venue</Label>
-              <Input placeholder="Kazipur, Sirajganj" />
-              <FieldError />
+              <Label className="text-slate-100 font-medium">Match Venue</Label>
+              <Input placeholder="Kazipur, Sirajganj" className="text-white placeholder:text-slate-500" />
+              <FieldError className="text-red-400 text-xs" />
             </TextField>
 
             <Select
@@ -198,15 +199,15 @@ export default function CreateFixtureForm() {
               onSelectionChange={(key) => setStatus(key)}
               placeholder="Select match status"
             >
-              <Label>Status</Label>
-              <Select.Trigger>
-                <Select.Value />
-                <Select.Indicator />
+              <Label className="text-slate-100 font-medium">Status</Label>
+              <Select.Trigger className="text-white bg-slate-900 border-slate-700">
+                <Select.Value className="text-white" />
+                <Select.Indicator className="text-slate-300" />
               </Select.Trigger>
-              <Select.Popover>
-                <ListBox>
+              <Select.Popover className="bg-slate-900 border-slate-700">
+                <ListBox className="text-white">
                   {STATUS_OPTIONS.map((opt) => (
-                    <ListBox.Item key={opt} id={opt}>
+                    <ListBox.Item key={opt} id={opt} className="text-white hover:bg-slate-800">
                       {opt}
                     </ListBox.Item>
                   ))}
@@ -217,36 +218,36 @@ export default function CreateFixtureForm() {
         </Fieldset>
 
         <Fieldset>
-          <Fieldset.Legend>Teams</Fieldset.Legend>
+          <Fieldset.Legend className="text-white font-medium text-lg mb-2">Teams</Fieldset.Legend>
           <Fieldset.Group className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
               <TextField name="homeTeam" fullWidth isRequired>
-                <Label>Home Team</Label>
-                <Input placeholder="e.g. FC Boraitola" />
-                <FieldError />
+                <Label className="text-slate-100 font-medium">Home Team</Label>
+                <Input placeholder="e.g. FC Boraitola" className="text-white placeholder:text-slate-500" />
+                <FieldError className="text-red-400 text-xs" />
               </TextField>
 
               <TextField name="homeLogo" fullWidth isRequired>
-                <Label>Home Logo Code</Label>
-                <Input placeholder="e.g. FCB" maxLength={5} />
-                <Description>
+                <Label className="text-slate-100 font-medium">Home Logo Code</Label>
+                <Input placeholder="e.g. FCB" maxLength={5} className="text-white placeholder:text-slate-500" />
+                <Description className="text-slate-400 text-xs">
                   Short badge code shown in the fixture card.
                 </Description>
-                <FieldError />
+                <FieldError className="text-red-400 text-xs" />
               </TextField>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <TextField name="awayTeam" fullWidth isRequired>
-                <Label>Away Team</Label>
-                <Input placeholder="e.g. Young Star Club" />
-                <FieldError />
+                <Label className="text-slate-100 font-medium">Away Team</Label>
+                <Input placeholder="e.g. Young Star Club" className="text-white placeholder:text-slate-500" />
+                <FieldError className="text-red-400 text-xs" />
               </TextField>
 
               <TextField name="awayLogo" fullWidth isRequired>
-                <Label>Away Logo Code</Label>
-                <Input placeholder="e.g. YSC" maxLength={5} />
-                <FieldError />
+                <Label className="text-slate-100 font-medium">Away Logo Code</Label>
+                <Input placeholder="e.g. YSC" maxLength={5} className="text-white placeholder:text-slate-500" />
+                <FieldError className="text-red-400 text-xs" />
               </TextField>
             </div>
           </Fieldset.Group>
@@ -256,20 +257,20 @@ export default function CreateFixtureForm() {
               <div
                 className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
                   submitState === "success"
-                    ? "border-green-500/30 bg-green-500/10 text-green-600"
-                    : "border-red-500/30 bg-red-500/10 text-red-600"
+                    ? "border-green-500/30 bg-green-500/10 text-green-400"
+                    : "border-red-500/30 bg-red-500/10 text-red-400"
                 }`}
               >
                 {submitState === "success" ? (
-                  <CircleCheck className="size-4 shrink-0" />
+                  <CircleCheck className="size-4 shrink-0 text-green-400" />
                 ) : (
-                  <CircleXmark className="size-4 shrink-0" />
+                  <CircleXmark className="size-4 shrink-0 text-red-400" />
                 )}
                 <span>{submitMessage}</span>
               </div>
             ) : null}
 
-            <Button type="submit" fullWidth isDisabled={isLoading}>
+            <Button type="submit" fullWidth isDisabled={isLoading} className="bg-primary text-white font-medium">
               <Plus className="size-4" />
               {isLoading ? "Creating..." : "Create Fixture"}
             </Button>

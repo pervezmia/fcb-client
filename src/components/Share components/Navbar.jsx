@@ -611,7 +611,7 @@ export default function Navbar() {
                       className="rounded-lg hover:bg-slate-800"
                     >
                       <Link
-                        href="dashboard/player"
+                        href="/dashboard/player"
                         className="block w-full py-1 text-slate-300 hover:text-blue-400"
                       >
                         Profile
@@ -750,7 +750,7 @@ export default function Navbar() {
 
                   {/* Profile */}
                   <Link
-                    href="dashboard/player"
+                    href="/dashboard/player"
                     onClick={() => setIsOpen(false)}
                     className="w-full rounded-xl bg-slate-800 py-3 text-center text-base font-medium text-white"
                   >
