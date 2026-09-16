@@ -9,7 +9,8 @@ export const navLinksAdmin = [
   { name: "Profile", href: "/dashboard/player" },
   { name: "Create Player", href: "/dashboard/player/create" },
   { name: "Manage Players", href: "/dashboard/admin/manage-user" },
-  { name: "Fixtures", href: "/dashboard/admin/fixtures" }
+  { name: "Create Fixture", href: "/dashboard/admin/fixtures" },
+  { name: "Manage Fixtures", href: "/dashboard/admin/manage-fixtures" },
 ];
 
 
