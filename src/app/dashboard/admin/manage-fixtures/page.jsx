@@ -1,4 +1,5 @@
 import ManageFixturesTable from "@/components/admin/ManageFixturesTable";
+import { backendURL } from "@/lib/core/core";
 
 // এসইও অপ্টিমাইজেশনের জন্য মেটাডাটা
 export const metadata = {
@@ -9,7 +10,7 @@ export const metadata = {
 // ডাটা ফেচ করার ফাংশন
 async function getFixtures() {
   try {
-    const res = await fetch("http://localhost:5000/fixtures", {
+    const res = await fetch(`${backendURL}/fixtures`, {
       cache: "no-store", // সবসময় ফ্রেশ ডেটা পাওয়ার জন্য
     });
     if (!res.ok) throw new Error("Failed to fetch fixtures");
