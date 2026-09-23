@@ -1,4 +1,4 @@
-import CreateBestMomentPage from '@/components/admin/CreateBestMomentPage';
+import CreateBestMomentPage from '@/components/dashboard/admin/CreateBestMomentPage';
 import React from 'react';
 
 const CreatePage = () => {

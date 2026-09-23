@@ -1,4 +1,4 @@
-import CreateFixtureForm from "@/components/admin/CreateFixtureForm";
+import CreateFixtureForm from "@/components/dashboard/admin/CreateFixtureForm";
 
 export const metadata = {
   title: "Create Fixture | FC Boraitola Admin",

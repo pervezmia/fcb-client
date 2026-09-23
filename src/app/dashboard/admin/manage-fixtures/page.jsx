@@ -1,4 +1,4 @@
-import ManageFixturesTable from "@/components/admin/ManageFixturesTable";
+import ManageFixturesTable from "@/components/dashboard/admin/ManageFixturesTable";
 import { backendURL } from "@/lib/core/core";
 
 // এসইও অপ্টিমাইজেশনের জন্য মেটাডাটা

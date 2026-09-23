@@ -1,4 +1,4 @@
-import AdminProfileContent from "@/components/admin/AdminProfileContent";
+import AdminProfileContent from "@/components/dashboard/admin/AdminProfileContent";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getAdmin } from "@/lib/action/admin/admin";
