@@ -19,7 +19,7 @@ const images = [
 
 export default function HeroImageSlider() {
   return (
-    <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl bg-slate-950 backdrop-blur-xl">
+    <div className="relative w-full max-w-7xl mt-5 mx-auto  rounded-xl overflow-hidden border border-slate-700/60 shadow-2xl bg-slate-950 backdrop-blur-xl">
       <Swiper
         modules={[Autoplay, Pagination, EffectFade]}
         effect={'fade'}
