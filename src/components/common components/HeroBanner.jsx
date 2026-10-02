@@ -8,10 +8,76 @@ import { Calendar, Shield, Persons } from "@gravity-ui/icons";
 
 import TypewriterEffect from "./TypewriterEffect";
 import HeroImageSlider from "./HeroImageSlider";
+import { backendURL } from "@/lib/core/core";
 
+const MONTHS = {
+  JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
+  JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
+};
 
+// "TUE 08 SEP 2026" + "04:00 PM" -> Date
+function parseMatchDate(match) {
+  const parts = (match.date || "").trim().split(/\s+/); // [weekday, day, month, year]
+  const [, day, mon, year] = parts;
+  const month = MONTHS[mon?.toUpperCase()];
+  if (!day || month === undefined || !year) return null;
 
-export default function HeroBanner() {
+  const t = (match.time || "").match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  let hours = 0;
+  let minutes = 0;
+  if (t) {
+    hours = Number(t[1]) % 12;
+    if (t[3].toUpperCase() === "PM") hours += 12;
+    minutes = Number(t[2]);
+  }
+  return new Date(Number(year), month, Number(day), hours, minutes);
+}
+
+async function safeFetch(path) {
+  try {
+    const res = await fetch(`${backendURL}${path}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Failed: ${path}`);
+    return await res.json();
+  } catch (error) {
+    console.error(`HeroBanner fetch error (${path}):`, error);
+    return [];
+  }
+}
+
+async function getHeroData() {
+  const [fixtures, players] = await Promise.all([
+    safeFetch("/fixtures"),
+    safeFetch("/players"),
+  ]);
+
+  const allMatches = fixtures.flatMap((group) => group.matches || []);
+
+  const upcoming = allMatches
+    .filter((m) => m.status === "Upcoming")
+    .map((m) => ({ ...m, _dateObj: parseMatchDate(m) }))
+    .sort((a, b) => {
+      if (!a._dateObj) return 1;
+      if (!b._dateObj) return -1;
+      return a._dateObj - b._dateObj;
+    });
+
+  const now = new Date();
+  // Prothome future er shobcheye kache match, na thakle shobcheye purono Upcoming
+  const nextMatch =
+    upcoming.find((m) => m._dateObj && m._dateObj >= now) || upcoming[0] || null;
+
+  return {
+    nextMatch,
+    totalMatches: allMatches.length,
+    totalPlayers: Array.isArray(players) ? players.length : 0,
+    upcomingCount: upcoming.length,
+  };
+}
+
+export default async function HeroBanner() {
+  const { nextMatch, totalMatches, totalPlayers, upcomingCount } =
+    await getHeroData();
+
   return (
     <div className="relative bg-slate-900 text-white overflow-hidden border-b border-blue-500/20">
       {/* Background Glow & Ambient Effects */}
@@ -38,15 +104,10 @@ export default function HeroBanner() {
             {/* Main Heading */}
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
-
               The Ultimate Home for <br />
-
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-400 to-red-500">
-
                 FC Boraitola Fans & Players
-
               </span>
-
             </h1>
 
             {/* <TypewriterEffect></TypewriterEffect> */}
@@ -79,14 +140,13 @@ export default function HeroBanner() {
               </Link>
             </div>
 
-            {/* Quick Stats */}
+            {/* Quick Stats (real data) */}
 
             <div className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-800/80 max-w-lg mx-auto lg:mx-0">
               <div>
                 <p className="text-2xl sm:text-3xl font-black text-white">
-                  100+
+                  {totalMatches}
                 </p>
-
                 <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
                   Matches
                 </p>
@@ -94,73 +154,95 @@ export default function HeroBanner() {
 
               <div>
                 <p className="text-2xl sm:text-3xl font-black text-white">
-                  25+
+                  {totalPlayers}
                 </p>
-
                 <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
                   Squad Players
                 </p>
               </div>
 
               <div>
-                <p className="text-2xl sm:text-3xl font-black text-white">3</p>
-
+                <p className="text-2xl sm:text-3xl font-black text-white">
+                  {upcomingCount}
+                </p>
                 <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
-                  Active Teams
+                  Upcoming
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Right Visual / Card Showcase Area */}
+          {/* Right Visual / Next Match Card */}
 
           <div className="lg:col-span-5 flex flex-col justify-center items-center">
             <div className="relative w-full max-w-md bg-slate-800/40 border border-slate-700/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-6">
               <div className="flex items-center justify-between border-b border-slate-700/60 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-
                   <span className="text-sm font-bold text-slate-200 tracking-wide uppercase">
-                    Next Match Live Preview
+                    Next Match
                   </span>
                 </div>
 
                 <span className="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-medium">
-                  Upcoming
+                  {nextMatch ? nextMatch.status : "No Match"}
                 </span>
               </div>
 
-              {/* Match Card Info */}
+              {nextMatch ? (
+                <>
+                  {/* Match Card Info */}
+                  <div className="flex items-center justify-between py-4">
+                    <div className="text-center space-y-2 flex-1">
+                      <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xl font-black text-blue-400">
+                        {nextMatch.homeLogo || "HOM"}
+                      </div>
+                      <p className="text-sm font-bold text-slate-200">
+                        {nextMatch.homeTeam}
+                      </p>
+                    </div>
 
-              <div className="flex items-center justify-between py-4">
-                <div className="text-center space-y-2 flex-1">
-                  <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xl font-black text-blue-400">
-                    FCB
+                    <div className="px-4 text-center">
+                      <span className="text-xl font-black text-slate-500">VS</span>
+                      <p className="text-[10px] text-slate-400 mt-1">
+                        {nextMatch.date}
+                      </p>
+                      <p className="text-[10px] font-bold text-slate-300">
+                        {nextMatch.time}
+                      </p>
+                    </div>
+
+                    <div className="text-center space-y-2 flex-1">
+                      <div className="w-14 h-14 mx-auto rounded-2xl bg-red-600/20 border border-red-500/30 flex items-center justify-center text-xl font-black text-red-400">
+                        {nextMatch.awayLogo || "AWY"}
+                      </div>
+                      <p className="text-sm font-bold text-slate-200">
+                        {nextMatch.awayTeam}
+                      </p>
+                    </div>
                   </div>
 
-                  <p className="text-sm font-bold text-slate-200">
-                    FC Boraitola
-                  </p>
-                </div>
-
-                <div className="px-4 text-center">
-                  <span className="text-xl font-black text-slate-500">VS</span>
-
-                  <p className="text-[10px] text-slate-400 mt-1">
-                    Sunday, 8:00 PM
-                  </p>
-                </div>
-
-                <div className="text-center space-y-2 flex-1">
-                  <div className="w-14 h-14 mx-auto rounded-2xl bg-red-600/20 border border-red-500/30 flex items-center justify-center text-xl font-black text-red-400">
-                    TIG
+                  {/* Venue & Squad info */}
+                  <div className="flex items-center justify-between text-xs text-slate-400 border-t border-slate-700/60 pt-4">
+                    <span>
+                      Venue:{" "}
+                      <span className="text-blue-400 font-semibold">
+                        {nextMatch.matchCenterUrl || "Boraitola Ground"}
+                      </span>
+                    </span>
+                    <span>
+                      Squad:{" "}
+                      <span className="text-blue-400 font-semibold">
+                        {nextMatch.squad?.length || 0}
+                      </span>
+                    </span>
                   </div>
-
-                  <p className="text-sm font-bold text-slate-200">
-                    Boraitola Tigers
-                  </p>
+                </>
+              ) : (
+                <div className="py-8 text-center text-sm text-slate-400">
+                  No upcoming match scheduled right now.
                 </div>
-              </div>
+              )}
 
               {/* Action Button inside card */}
 

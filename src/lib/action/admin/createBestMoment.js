@@ -1,5 +1,6 @@
 "use server";
 
+import { backendURL } from "@/lib/core/core";
 import { redirect } from "next/navigation";
 
 export async function createBestMoment(formData) {
@@ -7,7 +8,7 @@ export async function createBestMoment(formData) {
   const data = Object.fromEntries(formData.entries());
 
   try {
-    const res = await fetch("http://localhost:5000/best-moments", {
+    const res = await fetch(`${backendURL}/best-moments`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

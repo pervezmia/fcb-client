@@ -128,7 +128,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-10 pt-8 border-t border-slate-800 text-center">
             <p className="text-[10px] text-slate-600 tracking-widest uppercase">
-                Powered by FC Boraitola Tech Team | Design Style: Pro Club v3
+                Powered by FC Boraitola Tech Team | Design Style: Pervez Stack
             </p>
         </div>
       </div>

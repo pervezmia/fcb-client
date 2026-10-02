@@ -6,6 +6,7 @@ import { Pencil, FloppyDisk, Xmark } from "@gravity-ui/icons";
 import toast from "react-hot-toast";
 import StatusSelect from "./StatusSelect";
 import { backendURL } from "@/lib/core/core";
+import { authClient } from "@/lib/auth-client";
 
 export default function ManageFixturesTable({ initialFixtures }) {
   const [fixtures, setFixtures] = useState(initialFixtures);
@@ -28,17 +29,30 @@ export default function ManageFixturesTable({ initialFixtures }) {
   const handleSave = async (groupId, matchIndex) => {
     setLoading(true);
     try {
+      // Better Auth JWT token (backend verifyToken er jonno)
+      const { data: tokenData, error: tokenError } = await authClient.token();
+      const token = tokenData?.token;
+
+      if (tokenError || !token) {
+        toast.error("Session expired. Please login again.");
+        return;
+      }
+
       const res = await fetch(
-        `${backendURL}/fixtures/${groupId}/match/${matchIndex}`,
+        `${backendURL}/fixtures/${groupId}/match/${matchIndex}/status`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ status: editStatus }),
         },
       );
 
       const data = await res.json();
-      if (data.success) {
+
+      if (res.ok && data.success) {
         toast.success("Match status updated successfully!");
         setFixtures((prev) =>
           prev.map((group) => {
@@ -55,7 +69,7 @@ export default function ManageFixturesTable({ initialFixtures }) {
         );
         setEditingKey(null);
       } else {
-        toast.error(data.error || "Failed to update match status.");
+        toast.error(data.error || data.message || "Failed to update match status.");
       }
     } catch (err) {
       console.error(err);
@@ -74,9 +88,9 @@ export default function ManageFixturesTable({ initialFixtures }) {
         </p>
       </div>
 
-      {/* ডার্ক থিম নিশ্চিত করার জন্য wrapper এ bg-slate-900 দেওয়া হয়েছে */}
+      {/* ডার্ক থিম নিশ্চিত করার জন্য wrapper এ bg-slate-900 দেওয়া হয়েছে */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
-        <Table 
+        <Table
           aria-label="Fixtures Management Table"
           className="bg-slate-900 text-white w-full"
         >
