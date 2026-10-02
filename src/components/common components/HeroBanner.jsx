@@ -9,10 +9,21 @@ import { Calendar, Shield, Persons } from "@gravity-ui/icons";
 import TypewriterEffect from "./TypewriterEffect";
 import HeroImageSlider from "./HeroImageSlider";
 import { backendURL } from "@/lib/core/core";
+import AnimatedCounter from "../AnimatedCounter";
 
 const MONTHS = {
-  JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
-  JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
+  JAN: 0,
+  FEB: 1,
+  MAR: 2,
+  APR: 3,
+  MAY: 4,
+  JUN: 5,
+  JUL: 6,
+  AUG: 7,
+  SEP: 8,
+  OCT: 9,
+  NOV: 10,
+  DEC: 11,
 };
 
 // "TUE 08 SEP 2026" + "04:00 PM" -> Date
@@ -64,7 +75,9 @@ async function getHeroData() {
   const now = new Date();
   // Prothome future er shobcheye kache match, na thakle shobcheye purono Upcoming
   const nextMatch =
-    upcoming.find((m) => m._dateObj && m._dateObj >= now) || upcoming[0] || null;
+    upcoming.find((m) => m._dateObj && m._dateObj >= now) ||
+    upcoming[0] ||
+    null;
 
   return {
     nextMatch,
@@ -145,7 +158,7 @@ export default async function HeroBanner() {
             <div className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-800/80 max-w-lg mx-auto lg:mx-0">
               <div>
                 <p className="text-2xl sm:text-3xl font-black text-white">
-                  {totalMatches}
+                  <AnimatedCounter value={totalMatches} />
                 </p>
                 <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
                   Matches
@@ -154,7 +167,7 @@ export default async function HeroBanner() {
 
               <div>
                 <p className="text-2xl sm:text-3xl font-black text-white">
-                  {totalPlayers}
+                  <AnimatedCounter value={totalPlayers} />
                 </p>
                 <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
                   Squad Players
@@ -163,7 +176,7 @@ export default async function HeroBanner() {
 
               <div>
                 <p className="text-2xl sm:text-3xl font-black text-white">
-                  {upcomingCount}
+                  <AnimatedCounter value={upcomingCount} />
                 </p>
                 <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
                   Upcoming
@@ -203,7 +216,9 @@ export default async function HeroBanner() {
                     </div>
 
                     <div className="px-4 text-center">
-                      <span className="text-xl font-black text-slate-500">VS</span>
+                      <span className="text-xl font-black text-slate-500">
+                        VS
+                      </span>
                       <p className="text-[10px] text-slate-400 mt-1">
                         {nextMatch.date}
                       </p>
