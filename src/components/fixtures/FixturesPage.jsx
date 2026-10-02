@@ -16,6 +16,9 @@ export default function FixturesPage({ fixturesData = [], allPlayers = [] }) {
   // { "groupId-matchIdx": [playerId, ...] }
   const [selected, setSelected] = useState({});
 
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user?.role === "admin";
+
   const togglePlayerSelect = (matchKey, playerId) => {
     setSelected((prev) => {
       const current = prev[matchKey] || [];
@@ -28,8 +31,8 @@ export default function FixturesPage({ fixturesData = [], allPlayers = [] }) {
     });
   };
 
-  // playerIds: array, isRemove: true/false
   const handleSquadUpdate = async (groupId, matchIndex, playerIds, isRemove, loadingKey) => {
+    if (!isAdmin) return;
     const action = isRemove ? "remove" : "add";
     setActionLoading(loadingKey);
 
@@ -102,6 +105,7 @@ export default function FixturesPage({ fixturesData = [], allPlayers = [] }) {
                 {group.matches?.map((match, matchIdx) => {
                   const matchKey = `${group._id}-${matchIdx}`;
                   const isUpcoming = match.status === "Upcoming";
+                  const canManage = isAdmin && isUpcoming;
                   const squadIds = (match.squad || []).map(String);
                   const availablePlayers = allPlayers.filter((p) => !squadIds.includes(String(p._id)));
                   const pickedIds = selected[matchKey] || [];
@@ -137,110 +141,116 @@ export default function FixturesPage({ fixturesData = [], allPlayers = [] }) {
                         </div>
                       </div>
 
-                      {/* SQUAD MANAGEMENT SECTION */}
-                      <div
-                        className={`border-t border-slate-700/60 bg-slate-900/50 p-4 space-y-4 ${
-                          !isUpcoming ? "opacity-50" : ""
-                        }`}
-                      >
+                      {/* SQUAD SECTION */}
+                      <div className="border-t border-slate-700/60 bg-slate-900/50 p-4 space-y-4">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Match Squad Management</h4>
+                          <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                            {isAdmin ? "Match Squad Management" : "Match Squad"}
+                          </h4>
                           <span className="text-xs text-blue-400 font-semibold">
                             Selected: {match.squad?.length || 0} Players
                           </span>
                         </div>
 
-                        {!isUpcoming ? (
-                          <p className="text-xs text-slate-400">
-                            Squad management is disabled because this match is {match.status?.toLowerCase()}.
-                          </p>
-                        ) : (
-                          <div className="space-y-2">
-                            {/* Multi-select player list */}
-                            <div className="max-h-48 overflow-y-auto bg-slate-900 border border-slate-700 rounded-xl divide-y divide-slate-800">
-                              {availablePlayers.length === 0 ? (
-                                <p className="p-3 text-xs text-slate-400">All players are already in the squad.</p>
-                              ) : (
-                                availablePlayers.map((player) => (
-                                  <label
-                                    key={player._id}
-                                    className="flex items-center gap-3 px-3 py-2 text-sm cursor-pointer hover:bg-slate-800/70"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={pickedIds.includes(player._id)}
-                                      onChange={() => togglePlayerSelect(matchKey, player._id)}
-                                      className="size-4 accent-blue-500"
-                                    />
-                                    <span className="text-white">
-                                      {player.name}
-                                      {player.position ? (
-                                        <span className="text-slate-400"> ({player.position})</span>
-                                      ) : null}
-                                    </span>
-                                  </label>
-                                ))
-                              )}
-                            </div>
+                        {/* Admin only: add players */}
+                        {isAdmin && (
+                          <div className={!isUpcoming ? "opacity-50" : ""}>
+                            {!isUpcoming ? (
+                              <p className="text-xs text-slate-400">
+                                Squad management is disabled because this match is {match.status?.toLowerCase()}.
+                              </p>
+                            ) : (
+                              <div className="space-y-2">
+                                <div className="max-h-48 overflow-y-auto bg-slate-900 border border-slate-700 rounded-xl divide-y divide-slate-800">
+                                  {availablePlayers.length === 0 ? (
+                                    <p className="p-3 text-xs text-slate-400">All players are already in the squad.</p>
+                                  ) : (
+                                    availablePlayers.map((player) => (
+                                      <label
+                                        key={player._id}
+                                        className="flex items-center gap-3 px-3 py-2 text-sm cursor-pointer hover:bg-slate-800/70"
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={pickedIds.includes(player._id)}
+                                          onChange={() => togglePlayerSelect(matchKey, player._id)}
+                                          className="size-4 accent-blue-500"
+                                        />
+                                        <span className="text-white">
+                                          {player.name}
+                                          {player.position ? (
+                                            <span className="text-slate-400"> ({player.position})</span>
+                                          ) : null}
+                                        </span>
+                                      </label>
+                                    ))
+                                  )}
+                                </div>
 
-                            <Button
-                              size="sm"
-                              isDisabled={pickedIds.length === 0 || isAdding}
-                              onPress={() =>
-                                handleSquadUpdate(group._id, matchIdx, pickedIds, false, `${matchKey}-add`)
-                              }
-                              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold w-full sm:w-auto"
-                            >
-                              {isAdding ? "Adding..." : `Add to Match (${pickedIds.length})`}
-                            </Button>
+                                <Button
+                                  size="sm"
+                                  isDisabled={pickedIds.length === 0 || isAdding}
+                                  onPress={() =>
+                                    handleSquadUpdate(group._id, matchIdx, pickedIds, false, `${matchKey}-add`)
+                                  }
+                                  className="bg-blue-600 hover:bg-blue-500 text-white font-semibold w-full sm:w-auto"
+                                >
+                                  {isAdding ? "Adding..." : `Add to Match (${pickedIds.length})`}
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         )}
 
-                        {/* Current squad list */}
-                        <div className="flex flex-wrap gap-2 pt-2">
-                          {match.squad?.map((playerId) => {
-                            const playerObj = allPlayers?.find((p) => String(p._id) === String(playerId));
-                            const removeKey = `${matchKey}-${playerId}`;
-                            const isThisLoading = actionLoading === removeKey;
-                            const playerImage = playerObj?.imageUrl || playerObj?.image || playerObj?.photo;
+                        {/* Current squad list (everyone sees it, only admin can remove) */}
+                        {match.squad?.length > 0 ? (
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            {match.squad.map((playerId) => {
+                              const playerObj = allPlayers?.find((p) => String(p._id) === String(playerId));
+                              const removeKey = `${matchKey}-${playerId}`;
+                              const isThisLoading = actionLoading === removeKey;
+                              const playerImage = playerObj?.imageUrl || playerObj?.image || playerObj?.photo;
 
-                            return (
-                              <div
-                                key={playerId}
-                                className="flex items-center gap-2 bg-slate-800 border border-slate-700 pl-2 pr-3 py-1.5 rounded-xl text-xs"
-                              >
-                                {playerImage ? (
-                                  <div className="relative w-5 h-5 rounded-full overflow-hidden border border-slate-600 shrink-0">
-                                    <Image
-                                      src={playerImage}
-                                      alt={playerObj?.name || "Player"}
-                                      fill
-                                      sizes="20px"
-                                      className="object-cover"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="w-5 h-5 rounded-full bg-blue-600/30 flex items-center justify-center text-[10px] font-bold text-blue-400 shrink-0">
-                                    {playerObj?.name?.charAt(0) || "P"}
-                                  </div>
-                                )}
-                                <span className="text-white font-medium">{playerObj ? playerObj.name : "Player"}</span>
+                              return (
+                                <div
+                                  key={playerId}
+                                  className="flex items-center gap-2 bg-slate-800 border border-slate-700 pl-2 pr-3 py-1.5 rounded-xl text-xs"
+                                >
+                                  {playerImage ? (
+                                    <div className="relative w-5 h-5 rounded-full overflow-hidden border border-slate-600 shrink-0">
+                                      <Image
+                                        src={playerImage}
+                                        alt={playerObj?.name || "Player"}
+                                        fill
+                                        sizes="20px"
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="w-5 h-5 rounded-full bg-blue-600/30 flex items-center justify-center text-[10px] font-bold text-blue-400 shrink-0">
+                                      {playerObj?.name?.charAt(0) || "P"}
+                                    </div>
+                                  )}
+                                  <span className="text-white font-medium">{playerObj ? playerObj.name : "Player"}</span>
 
-                                {isUpcoming && (
-                                  <button
-                                    disabled={isThisLoading}
-                                    onClick={() =>
-                                      handleSquadUpdate(group._id, matchIdx, [playerId], true, removeKey)
-                                    }
-                                    className="text-red-400 hover:text-red-300 font-bold ml-1 px-1 cursor-pointer disabled:opacity-50"
-                                  >
-                                    {isThisLoading ? "..." : "×"}
-                                  </button>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
+                                  {canManage && (
+                                    <button
+                                      disabled={isThisLoading}
+                                      onClick={() =>
+                                        handleSquadUpdate(group._id, matchIdx, [playerId], true, removeKey)
+                                      }
+                                      className="text-red-400 hover:text-red-300 font-bold ml-1 px-1 cursor-pointer disabled:opacity-50"
+                                    >
+                                      {isThisLoading ? "..." : "×"}
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-slate-400">No players selected for this match yet.</p>
+                        )}
                       </div>
 
                       {/* Footer Venue */}
