@@ -1,6 +1,7 @@
 import React from "react";
 import PlayersPage from "@/components/players/PlayersPage";
 import { getAllPlayers } from "@/lib/api/player";
+import TopPlayers from "@/components/TopPlayers";
 
 export const metadata = {
   title: "Squad & Players Directory | FCB Hub - FC Boraitola",
@@ -19,6 +20,7 @@ export default async function  PlayersParentPage() {
   const players = await getAllPlayers();
   return (
     <main className="min-h-screen bg-white">
+      <TopPlayers />
       <PlayersPage players={players}></PlayersPage>
     </main>
   );
