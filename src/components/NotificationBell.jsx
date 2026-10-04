@@ -1,52 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
-import { backendURL } from "@/lib/core/core";
-
-const TYPE_ICON = {
-  match_selected: "⚽",
-  match_removed: "⚠️",
-};
+import useNotifications from "@/hooks/useNotifications";
+import NotificationItem from "./NotificationItem";
 
 export default function NotificationBell({ profileHref = "/dashboard" }) {
   const { data: session } = authClient.useSession();
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([]);
-  const [unread, setUnread] = useState(0);
   const wrapperRef = useRef(null);
 
-  const getToken = async () => {
-    const { data } = await authClient.token();
-    return data?.token;
-  };
-
-  const load = useCallback(async () => {
-    try {
-      const token = await getToken();
-      if (!token) return;
-      const res = await fetch(`${backendURL}/notifications/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      setItems(data.notifications || []);
-      setUnread(data.unreadCount || 0);
-    } catch (err) {
-      console.error("Notification load error:", err);
-    }
-  }, []);
-
-  // Login thakle load kore, tarpor protি 60 sec e refresh
-  useEffect(() => {
-    if (!session?.user) return;
-    load();
-    const timer = setInterval(load, 60000);
-    return () => clearInterval(timer);
-  }, [session?.user, load]);
+  const { items, unread, markAllRead } = useNotifications({
+    enabled: !!session?.user,
+    pollMs: 60000,
+  });
 
   // Baire click korle dropdown bondho
   useEffect(() => {
@@ -62,20 +31,7 @@ export default function NotificationBell({ profileHref = "/dashboard" }) {
   const handleToggle = async () => {
     const nextOpen = !open;
     setOpen(nextOpen);
-
-    // Khulle shob read kore dao
-    if (nextOpen && unread > 0) {
-      try {
-        const token = await getToken();
-        const res = await fetch(`${backendURL}/notifications/read-all`, {
-          method: "PATCH",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) setUnread(0);
-      } catch (err) {
-        console.error(err);
-      }
-    }
+    if (nextOpen && unread > 0) await markAllRead();
   };
 
   if (!session?.user) return null;
@@ -106,19 +62,7 @@ export default function NotificationBell({ profileHref = "/dashboard" }) {
             {items.length === 0 ? (
               <p className="p-4 text-xs text-slate-400">No notifications yet.</p>
             ) : (
-              items.slice(0, 5).map((n) => (
-                <div key={n._id} className="p-3 space-y-1">
-                  <p className="text-xs font-bold text-white">
-                    {TYPE_ICON[n.type] || "🔔"} {n.title}
-                  </p>
-                  <p className="text-[11px] text-slate-300 leading-relaxed">
-                    {n.message}
-                  </p>
-                  <p className="text-[10px] text-slate-500">
-                    {new Date(n.createdAt).toLocaleString()}
-                  </p>
-                </div>
-              ))
+              items.slice(0, 5).map((n) => <NotificationItem key={n._id} n={n} compact />)
             )}
           </div>
 

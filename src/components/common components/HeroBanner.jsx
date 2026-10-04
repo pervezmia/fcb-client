@@ -8,8 +8,9 @@ import { Calendar, Shield, Persons } from "@gravity-ui/icons";
 
 import TypewriterEffect from "./TypewriterEffect";
 import HeroImageSlider from "./HeroImageSlider";
-import { backendURL } from "@/lib/core/core";
 import AnimatedCounter from "../AnimatedCounter";
+import { getAllPlayers } from "@/lib/api/playerApi";
+import { getAllFixtures } from "@/lib/api/fixtureApi";
 
 const MONTHS = {
   JAN: 0,
@@ -44,24 +45,15 @@ function parseMatchDate(match) {
   return new Date(Number(year), month, Number(day), hours, minutes);
 }
 
-async function safeFetch(path) {
-  try {
-    const res = await fetch(`${backendURL}${path}`, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Failed: ${path}`);
-    return await res.json();
-  } catch (error) {
-    console.error(`HeroBanner fetch error (${path}):`, error);
-    return [];
-  }
-}
-
 async function getHeroData() {
   const [fixtures, players] = await Promise.all([
-    safeFetch("/fixtures"),
-    safeFetch("/players"),
+    getAllFixtures(),
+    getAllPlayers(),
   ]);
 
-  const allMatches = fixtures.flatMap((group) => group.matches || []);
+  const allMatches = (Array.isArray(fixtures) ? fixtures : []).flatMap(
+    (group) => group.matches || [],
+  );
 
   const upcoming = allMatches
     .filter((m) => m.status === "Upcoming")
