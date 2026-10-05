@@ -2,13 +2,8 @@ import { ArrowLeft, Calendar, ShieldCheck, MapPin } from "@gravity-ui/icons";
 import Image from "next/image";
 import Link from "next/link";
 import TierBadge from "@/components/TierBadge";
-// import OwnerNotifications from "@/components/OwnerNotifications";
+import { getStatusClasses } from "@/lib/playerStatus";
 
-const statusStyles = {
-  Active: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  Injured: "bg-red-500/15 text-red-400 border-red-500/30",
-  Suspended: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-};
 const teamLabels = {
   "fc-boraitola": "FC Boraitola",
   "boraitola-tigers": "Boraitola Tigers",
@@ -34,7 +29,7 @@ const Profile = ({ player }) => {
     });
   };
 
-  const statusClass = statusStyles[player.status] || statusStyles.Active;
+  const statusClass = getStatusClasses(player.status);
   const teamLabel = teamLabels[player.team] || player.team;
 
   return (
@@ -133,9 +128,6 @@ const Profile = ({ player }) => {
             <p className="text-sm text-slate-300 leading-relaxed">{player.bio}</p>
           </div>
         )}
-
-        {/* Notifications: shudhu ei player nijer login thakle */}
-        {/* <OwnerNotifications playerUserId={player.userId} /> */}
 
         {/* Back Button */}
         <Link

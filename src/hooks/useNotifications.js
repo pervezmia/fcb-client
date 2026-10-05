@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchMyNotifications, markAllNotificationsRead } from "@/lib/notificationApi";
+import { fetchMyNotifications } from "@/lib/api/notificationApi";
+import { markAllNotificationsRead } from "@/lib/action/player/notificationAction";
+import { getAuthToken } from "@/lib/core/authToken";
 
 export function useNotifications({ enabled = true, pollMs = 0 } = {}) {
   const [items, setItems] = useState([]);
@@ -26,12 +28,16 @@ export function useNotifications({ enabled = true, pollMs = 0 } = {}) {
   }, [enabled, pollMs, reload]);
 
   const markAllRead = useCallback(async () => {
-    const ok = await markAllNotificationsRead();
-    if (ok) {
+    const token = await getAuthToken();
+    if (!token) return false;
+
+    const res = await markAllNotificationsRead(token);
+    if (res?.success) {
       setItems((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnread(0);
+      return true;
     }
-    return ok;
+    return false;
   }, []);
 
   return { items, unread, loading, reload, markAllRead };

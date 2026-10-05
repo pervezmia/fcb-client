@@ -1,26 +1,33 @@
 import { backendURL } from "../core/core";
 
 export const getAllPlayers = async () => {
-    const res = await fetch(`${backendURL}/players`,{
-        cache: "no-store"
-    })
+  try {
+    const res = await fetch(`${backendURL}/players`, {
+      cache: "no-store",
+    });
 
-    if(!res.ok){
-        return [];
+    if (!res.ok) {
+      return [];
     }
-    const data = await res.json();
-    return data
-
-}
-
+    return await res.json();
+  } catch (error) {
+    console.error("getAllPlayers error:", error);
+    return [];
+  }
+};
 
 export const getSinglePlayer = async (id) => {
+  try {
     const res = await fetch(`${backendURL}/players/${id}`, {
-        cache: "no-store"
-    })
-    if(!res.ok){
-        return null;
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      return null;
     }
-    const data = await res.json()
-    return data
-}
+    return await res.json();
+  } catch (error) {
+    console.error("getSinglePlayer error:", error);
+    return null;
+  }
+};

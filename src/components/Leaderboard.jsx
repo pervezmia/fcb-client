@@ -1,4 +1,4 @@
-import { getAllPlayers } from "@/lib/api/playerApi";
+import { getAllPlayers } from "@/lib/api/player";
 import { rankPlayers } from "@/lib/leaderboard";
 import LeaderboardClient from "./LeaderboardClient";
 

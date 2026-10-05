@@ -11,7 +11,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-const images = [
+const FALLBACK_IMAGES = [
   { src: "https://i.ibb.co.com/jv4WtJkD/rsz-fp-2.png", alt: "FC Boraitola Team Photo 1" },
   { src: "https://i.ibb.co.com/Rp34KHCD/rsz-g-photo-1.png", alt: "FC Boraitola Team Photo 2" },
   { src: "https://i.ibb.co.com/0yd7p6xQ/rsz-grp.png", alt: "FC Boraitola Team Photo 3" },
@@ -19,9 +19,13 @@ const images = [
   { src: "https://i.ibb.co.com/hxY7C9K4/rsz-1received-731628236450162.png", alt: "FC Boraitola Team Photo 5" },
 ];
 
-export default function HeroImageSlider() {
+export default function HeroImageSlider({ images = FALLBACK_IMAGES }) {
   const swiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  if (images.length === 0) return null;
+
+  const hasMany = images.length > 1;
 
   return (
     <div
@@ -38,16 +42,18 @@ export default function HeroImageSlider() {
         modules={[Autoplay, Pagination, EffectFade, Keyboard]}
         effect="fade"
         fadeEffect={{ crossFade: true }}
-        loop
+        loop={hasMany}
         keyboard={{ enabled: true }}
-        autoplay={{ delay: 4500, disableOnInteraction: false, pauseOnMouseEnter: true }}
+        autoplay={
+          hasMany ? { delay: 4500, disableOnInteraction: false, pauseOnMouseEnter: true } : false
+        }
         pagination={{ clickable: true }}
         onSwiper={(swiper) => (swiperRef.current = swiper)}
         onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
         className="w-full h-full"
       >
         {images.map((img, index) => (
-          <SwiperSlide key={img.src} className="relative w-full h-full bg-slate-950">
+          <SwiperSlide key={img._id || img.src} className="relative w-full h-full bg-slate-950">
             {/* Blur backdrop: faka jayga image er rong diye bhore */}
             <Image
               src={img.src}
@@ -61,7 +67,7 @@ export default function HeroImageSlider() {
             {/* Main image: kokhono crop hobe na */}
             <Image
               src={img.src}
-              alt={img.alt}
+              alt={img.alt || "FC Boraitola Squad Moment"}
               fill
               sizes="(max-width: 1024px) 100vw, 700px"
               className="object-contain drop-shadow-2xl"
@@ -81,33 +87,37 @@ export default function HeroImageSlider() {
         </span>
       </div>
 
-      {/* Top-right counter */}
-      <div className="absolute top-3 right-3 z-10">
-        <span className="text-[11px] bg-slate-900/60 text-slate-100 border border-slate-600/50 px-3 py-1.5 rounded-full font-semibold backdrop-blur-md tabular-nums">
-          {activeIndex + 1} / {images.length}
-        </span>
-      </div>
+      {hasMany && (
+        <>
+          {/* Top-right counter */}
+          <div className="absolute top-3 right-3 z-10">
+            <span className="text-[11px] bg-slate-900/60 text-slate-100 border border-slate-600/50 px-3 py-1.5 rounded-full font-semibold backdrop-blur-md tabular-nums">
+              {activeIndex + 1} / {images.length}
+            </span>
+          </div>
 
-      {/* Prev / Next */}
-      <Button
-        isIconOnly
-        size="sm"
-        aria-label="Previous slide"
-        onPress={() => swiperRef.current?.slidePrev()}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-slate-900/60 text-white border border-slate-600/50 backdrop-blur-md hover:bg-slate-800/80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-      >
-        <ChevronLeft className="size-5" />
-      </Button>
+          {/* Prev / Next */}
+          <Button
+            isIconOnly
+            size="sm"
+            aria-label="Previous slide"
+            onPress={() => swiperRef.current?.slidePrev()}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-slate-900/60 text-white border border-slate-600/50 backdrop-blur-md hover:bg-slate-800/80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+          >
+            <ChevronLeft className="size-5" />
+          </Button>
 
-      <Button
-        isIconOnly
-        size="sm"
-        aria-label="Next slide"
-        onPress={() => swiperRef.current?.slideNext()}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-slate-900/60 text-white border border-slate-600/50 backdrop-blur-md hover:bg-slate-800/80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-      >
-        <ChevronRight className="size-5" />
-      </Button>
+          <Button
+            isIconOnly
+            size="sm"
+            aria-label="Next slide"
+            onPress={() => swiperRef.current?.slideNext()}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-slate-900/60 text-white border border-slate-600/50 backdrop-blur-md hover:bg-slate-800/80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+          >
+            <ChevronRight className="size-5" />
+          </Button>
+        </>
+      )}
     </div>
   );
 }

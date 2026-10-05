@@ -9,8 +9,9 @@ import { Calendar, Shield, Persons } from "@gravity-ui/icons";
 import HeroImageSlider from "./HeroImageSlider";
 import MatchCountdown from "./MatchCountdown";
 import AnimatedCounter from "../AnimatedCounter";
-import { getAllPlayers } from "@/lib/api/playerApi";
+import { getAllPlayers } from "@/lib/api/player";
 import { getAllFixtures } from "@/lib/api/fixtureApi";
+import HeroSlider from "./HeroSlider";
 
 const CLUB_UTC_OFFSET_HOURS = 6; // Bangladesh (UTC+6)
 
@@ -189,7 +190,8 @@ export default async function HeroBanner() {
 
           {/* ================= RIGHT: Slider + Next Match ================= */}
           <div className="lg:col-span-7 space-y-4">
-            <HeroImageSlider />
+            {/* <HeroImageSlider /> */}
+            <HeroSlider />
 
             <div className="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-5 backdrop-blur-xl shadow-2xl space-y-4">
               <div className="flex items-center justify-between">
