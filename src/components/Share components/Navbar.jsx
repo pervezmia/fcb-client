@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button, Dropdown, Label, Description } from "@heroui/react";
 import { Bars, Shield, Xmark } from "@gravity-ui/icons";
 import { authClient, useSession } from "@/lib/auth-client";
+import NotificationBell from "@/components/NotificationBell";
 
 const navLinks = [
   {
@@ -24,8 +24,8 @@ const navLinks = [
   },
   {
     name: "Best Moments",
-    href: "/best-moment"
-  }
+    href: "/best-moment",
+  },
 ];
 
 const fcbTeams = [
@@ -37,20 +37,16 @@ const fcbTeams = [
     name: "Boraitola Tigers",
     href: "/fcb-teams/boraitola-tigers",
   },
-  
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
-  
+
   const router = useRouter();
 
   const { data: session, isPending } = useSession();
 
   const [isOpen, setIsOpen] = useState(false);
-
-  // console.log(pathname);
-  
 
   // Menu open থাকলে body scroll lock
   useEffect(() => {
@@ -67,9 +63,10 @@ export default function Navbar() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  if(pathname.includes("dashboard")){
+  if (pathname.includes("dashboard")) {
     return null;
   }
+
   // Active route check
   const isActive = (href) => {
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -87,7 +84,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full overflow-x-hidden border-b border-blue-500/20 bg-slate-900 text-white">
+    <nav className="sticky top-0 z-50 w-full overflow-x-clip border-b border-blue-500/20 bg-slate-900 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* ================= LOGO ================= */}
@@ -120,7 +117,6 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {/* FCB Teams Dropdown */}
             {/* FCB Teams Dropdown */}
             <Dropdown>
               <Button
@@ -169,68 +165,73 @@ export default function Navbar() {
             {isPending ? (
               <div className="h-8 w-8 animate-pulse rounded-full bg-slate-800" />
             ) : session ? (
-              <Dropdown>
-                <Button
-                  isIconOnly
-                  className="h-auto min-w-0 rounded-full bg-transparent p-0"
-                >
-                  <div className="relative h-9 w-9 overflow-hidden rounded-full border-2 border-blue-500/50 transition-all hover:border-blue-500">
-                    <Image
-                      src={
-                        session.user?.image ||
-                        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"
-                      }
-                      alt="Profile"
-                      fill
-                      sizes="36px"
-                      className="object-cover"
-                    />
-                  </div>
-                </Button>
+              <>
+                {/* Notification Bell */}
+                <NotificationBell />
 
-                <Dropdown.Popover className="w-52 rounded-xl border border-slate-800 bg-slate-900 p-1 shadow-xl">
-                  <Dropdown.Menu>
-                    {/* User Info */}
-                    <Dropdown.Item
-                      key="user-info"
-                      textValue="User Info"
-                      className="mb-1 flex flex-col  border-b border-slate-800 pb-2"
-                    >
-                      <Label className="font-semibold text-white">
-                        {session.user?.name}
-                      </Label>
+                <Dropdown>
+                  <Button
+                    isIconOnly
+                    className="h-auto min-w-0 rounded-full bg-transparent p-0"
+                  >
+                    <div className="relative h-9 w-9 overflow-hidden rounded-full border-2 border-blue-500/50 transition-all hover:border-blue-500">
+                      <Image
+                        src={
+                          session.user?.image ||
+                          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"
+                        }
+                        alt="Profile"
+                        fill
+                        sizes="36px"
+                        className="object-cover"
+                      />
+                    </div>
+                  </Button>
 
-                      <Description className="truncate text-xs text-slate-400">
-                        {session.user?.email}
-                      </Description>
-                    </Dropdown.Item>
-
-                    {/* Profile */}
-                    <Dropdown.Item
-                      key="profile"
-                      textValue="Profile"
-                      className="rounded-lg hover:bg-slate-800"
-                    >
-                      <Link
-                        href="/dashboard/player"
-                        className="block w-full py-1 text-slate-300 hover:text-blue-400"
+                  <Dropdown.Popover className="w-52 rounded-xl border border-slate-800 bg-slate-900 p-1 shadow-xl">
+                    <Dropdown.Menu>
+                      {/* User Info */}
+                      <Dropdown.Item
+                        key="user-info"
+                        textValue="User Info"
+                        className="mb-1 flex flex-col  border-b border-slate-800 pb-2"
                       >
-                        Profile
-                      </Link>
-                    </Dropdown.Item>
+                        <Label className="font-semibold text-white">
+                          {session.user?.name}
+                        </Label>
 
-                    {/* Logout */}
-                    <Dropdown.Item
-                      key="logout"
-                      textValue="Sign Out"
-                      className="rounded-lg text-red-400 hover:bg-red-950/30"
-                      onClick={handleSignOut}
-                    >
-                      <span className="block w-full py-1">Sign Out</span>
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown.Popover>
-              </Dropdown>
+                        <Description className="truncate text-xs text-slate-400">
+                          {session.user?.email}
+                        </Description>
+                      </Dropdown.Item>
+
+                      {/* Profile */}
+                      <Dropdown.Item
+                        key="profile"
+                        textValue="Profile"
+                        className="rounded-lg hover:bg-slate-800"
+                      >
+                        <Link
+                          href="/dashboard/player"
+                          className="block w-full py-1 text-slate-300 hover:text-blue-400"
+                        >
+                          Profile
+                        </Link>
+                      </Dropdown.Item>
+
+                      {/* Logout */}
+                      <Dropdown.Item
+                        key="logout"
+                        textValue="Sign Out"
+                        className="rounded-lg text-red-400 hover:bg-red-950/30"
+                        onClick={handleSignOut}
+                      >
+                        <span className="block w-full py-1">Sign Out</span>
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown.Popover>
+                </Dropdown>
+              </>
             ) : (
               <div className="flex items-center gap-3">
                 <Link href="/login">
@@ -252,7 +253,10 @@ export default function Navbar() {
           </div>
 
           {/* ================= MOBILE TOGGLE ================= */}
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
+            {/* Notification Bell (login thakle) */}
+            <NotificationBell />
+
             <Button
               isIconOnly
               variant="flat"

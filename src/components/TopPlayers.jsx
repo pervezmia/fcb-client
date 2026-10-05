@@ -1,4 +1,4 @@
-import { backendURL } from "@/lib/core/core";
+/* import { backendURL } from "@/lib/core/core";
 import { TIERS, getPlayerTier } from "@/lib/playerTier";
 import TierBadge from "./TierBadge";
 
@@ -51,4 +51,4 @@ export default async function TopPlayers() {
       })}
     </section>
   );
-}
+} */

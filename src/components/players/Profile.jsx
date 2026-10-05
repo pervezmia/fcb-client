@@ -2,7 +2,7 @@ import { ArrowLeft, Calendar, ShieldCheck, MapPin } from "@gravity-ui/icons";
 import Image from "next/image";
 import Link from "next/link";
 import TierBadge from "@/components/TierBadge";
-import OwnerNotifications from "@/components/OwnerNotifications";
+// import OwnerNotifications from "@/components/OwnerNotifications";
 
 const statusStyles = {
   Active: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
@@ -135,7 +135,7 @@ const Profile = ({ player }) => {
         )}
 
         {/* Notifications: shudhu ei player nijer login thakle */}
-        <OwnerNotifications playerUserId={player.userId} />
+        {/* <OwnerNotifications playerUserId={player.userId} /> */}
 
         {/* Back Button */}
         <Link

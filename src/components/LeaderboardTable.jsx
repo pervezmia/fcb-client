@@ -1,4 +1,4 @@
-import Link from "next/link";
+/* import Link from "next/link";
 import { getPlayerTier } from "@/lib/playerTier";
 import { PODIUM } from "@/lib/rankStyles";
 import PlayerAvatar from "./PlayerAvatar";
@@ -82,4 +82,4 @@ export default function LeaderboardTable({ ranked, meId, hasGoals, hasAssists })
       </div>
     </div>
   );
-}
+} */

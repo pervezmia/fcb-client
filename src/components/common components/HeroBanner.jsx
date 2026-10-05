@@ -6,11 +6,13 @@ import { Button } from "@heroui/react";
 
 import { Calendar, Shield, Persons } from "@gravity-ui/icons";
 
-import TypewriterEffect from "./TypewriterEffect";
 import HeroImageSlider from "./HeroImageSlider";
+import MatchCountdown from "./MatchCountdown";
 import AnimatedCounter from "../AnimatedCounter";
 import { getAllPlayers } from "@/lib/api/playerApi";
 import { getAllFixtures } from "@/lib/api/fixtureApi";
+
+const CLUB_UTC_OFFSET_HOURS = 6; // Bangladesh (UTC+6)
 
 const MONTHS = {
   JAN: 0,
@@ -27,7 +29,7 @@ const MONTHS = {
   DEC: 11,
 };
 
-// "TUE 08 SEP 2026" + "04:00 PM" -> Date
+// "TUE 08 SEP 2026" + "04:00 PM" -> Date (Bangladesh time dhore, server UTC hole-o thik)
 function parseMatchDate(match) {
   const parts = (match.date || "").trim().split(/\s+/); // [weekday, day, month, year]
   const [, day, mon, year] = parts;
@@ -42,7 +44,11 @@ function parseMatchDate(match) {
     if (t[3].toUpperCase() === "PM") hours += 12;
     minutes = Number(t[2]);
   }
-  return new Date(Number(year), month, Number(day), hours, minutes);
+
+  return new Date(
+    Date.UTC(Number(year), month, Number(day), hours, minutes) -
+      CLUB_UTC_OFFSET_HOURS * 60 * 60 * 1000,
+  );
 }
 
 async function getHeroData() {
@@ -55,9 +61,10 @@ async function getHeroData() {
     (group) => group.matches || [],
   );
 
-  const upcoming = allMatches
+  const withDate = allMatches.map((m) => ({ ...m, _dateObj: parseMatchDate(m) }));
+
+  const upcoming = withDate
     .filter((m) => m.status === "Upcoming")
-    .map((m) => ({ ...m, _dateObj: parseMatchDate(m) }))
     .sort((a, b) => {
       if (!a._dateObj) return 1;
       if (!b._dateObj) return -1;
@@ -71,62 +78,74 @@ async function getHeroData() {
     upcoming[0] ||
     null;
 
+  // Upcoming na thakle shesh khela match
+  const lastMatch =
+    withDate
+      .filter((m) => m.status === "Completed" && m._dateObj)
+      .sort((a, b) => b._dateObj - a._dateObj)[0] || null;
+
   return {
     nextMatch,
+    lastMatch,
     totalMatches: allMatches.length,
     totalPlayers: Array.isArray(players) ? players.length : 0,
     upcomingCount: upcoming.length,
   };
 }
 
-export default async function HeroBanner() {
-  const { nextMatch, totalMatches, totalPlayers, upcomingCount } =
-    await getHeroData();
+function TeamBadge({ logo, name, tone }) {
+  const styles =
+    tone === "home"
+      ? "bg-blue-600/20 border-blue-500/30 text-blue-400"
+      : "bg-red-600/20 border-red-500/30 text-red-400";
 
   return (
-    <div className="relative bg-slate-900 text-white overflow-hidden border-b border-blue-500/20">
-      {/* Background Glow & Ambient Effects */}
-      <HeroImageSlider></HeroImageSlider>
+    <div className="flex-1 text-center space-y-2 min-w-0">
+      <div
+        className={`size-14 mx-auto rounded-2xl border flex items-center justify-center text-lg font-black ${styles}`}
+      >
+        {logo || name?.slice(0, 3).toUpperCase()}
+      </div>
+      <p className="text-sm font-bold text-slate-200 truncate">{name}</p>
+    </div>
+  );
+}
 
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-950/40 via-slate-900 to-slate-900 pointer-events-none"></div>
+export default async function HeroBanner() {
+  const { nextMatch, lastMatch, totalMatches, totalPlayers, upcomingCount } =
+    await getHeroData();
 
-      <div className="absolute w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none -top-40 -left-20"></div>
+  const cardMatch = nextMatch || lastMatch;
 
-      <div className="absolute w-[500px] h-[500px] bg-red-600/10 rounded-full blur-3xl pointer-events-none -bottom-40 -right-20"></div>
+  return (
+    <section className="relative bg-slate-950 text-white overflow-hidden border-b border-blue-500/20">
+      {/* Ambient glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-950/40 via-slate-950 to-slate-950 pointer-events-none" />
+      <div className="absolute w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none -top-40 -left-20" />
+      <div className="absolute w-[500px] h-[500px] bg-red-600/10 rounded-full blur-3xl pointer-events-none -bottom-40 -right-20" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Content Area */}
-
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            {/* Badge */}
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          {/* ================= LEFT: Text ================= */}
+          <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-blue-400 text-xs font-semibold tracking-wide uppercase">
               <Shield className="w-4 h-4 text-red-500" />
               Official FCB Hub & Community
             </div>
 
-            {/* Main Heading */}
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
-              The Ultimate Home for <br />
+            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-black tracking-tight leading-[1.1] text-balance">
+              The Ultimate Home for{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-400 to-red-500">
                 FC Boraitola Fans & Players
               </span>
             </h1>
 
-            {/* <TypewriterEffect></TypewriterEffect> */}
-
-            {/* Description */}
-
-            <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto lg:mx-0">
+            <p className="text-base sm:text-lg text-slate-400 max-w-xl mx-auto lg:mx-0">
               Track live match fixtures, explore player rosters, manage team
               stats, and stay updated with everything happening in our club.
             </p>
 
-            {/* CTA Buttons */}
-
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <Link href="/fixtures" className="w-full sm:w-auto">
                 <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-red-600 text-white rounded-xl text-base font-semibold px-8 py-6 shadow-lg shadow-blue-600/25 hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                   <Calendar className="w-5 h-5" />
@@ -146,124 +165,106 @@ export default async function HeroBanner() {
             </div>
 
             {/* Quick Stats (real data) */}
-
-            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-800/80 max-w-lg mx-auto lg:mx-0">
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80 max-w-md mx-auto lg:mx-0">
               <div>
-                <p className="text-2xl sm:text-3xl font-black text-white">
+                <p className="text-3xl font-black text-white">
                   <AnimatedCounter value={totalMatches} />
                 </p>
-                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
-                  Matches
-                </p>
+                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Matches</p>
               </div>
-
               <div>
-                <p className="text-2xl sm:text-3xl font-black text-white">
+                <p className="text-3xl font-black text-white">
                   <AnimatedCounter value={totalPlayers} />
                 </p>
-                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
-                  Squad Players
-                </p>
+                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Squad Players</p>
               </div>
-
               <div>
-                <p className="text-2xl sm:text-3xl font-black text-white">
+                <p className="text-3xl font-black text-white">
                   <AnimatedCounter value={upcomingCount} />
                 </p>
-                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">
-                  Upcoming
-                </p>
+                <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Upcoming</p>
               </div>
             </div>
           </div>
 
-          {/* Right Visual / Next Match Card */}
+          {/* ================= RIGHT: Slider + Next Match ================= */}
+          <div className="lg:col-span-7 space-y-4">
+            <HeroImageSlider />
 
-          <div className="lg:col-span-5 flex flex-col justify-center items-center">
-            <div className="relative w-full max-w-md bg-slate-800/40 border border-slate-700/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-700/60 pb-4">
+            <div className="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-5 backdrop-blur-xl shadow-2xl space-y-4">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                  <div
+                    className={`size-2.5 rounded-full ${
+                      nextMatch ? "bg-red-500 animate-pulse" : "bg-slate-500"
+                    }`}
+                  />
                   <span className="text-sm font-bold text-slate-200 tracking-wide uppercase">
-                    Next Match
+                    {nextMatch ? "Next Match" : "Last Match"}
                   </span>
                 </div>
 
-                <span className="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-medium">
-                  {nextMatch ? nextMatch.status : "No Match"}
-                </span>
+                {cardMatch && (
+                  <span className="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-medium">
+                    {cardMatch.status}
+                  </span>
+                )}
               </div>
 
-              {nextMatch ? (
+              {cardMatch ? (
                 <>
-                  {/* Match Card Info */}
-                  <div className="flex items-center justify-between py-4">
-                    <div className="text-center space-y-2 flex-1">
-                      <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xl font-black text-blue-400">
-                        {nextMatch.homeLogo || "HOM"}
-                      </div>
-                      <p className="text-sm font-bold text-slate-200">
-                        {nextMatch.homeTeam}
-                      </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <TeamBadge logo={cardMatch.homeLogo} name={cardMatch.homeTeam} tone="home" />
+
+                    <div className="px-2 text-center shrink-0">
+                      <span className="text-xl font-black text-slate-500">VS</span>
+                      <p className="text-[11px] text-slate-400 mt-1">{cardMatch.date}</p>
+                      <p className="text-[11px] font-bold text-slate-300">{cardMatch.time}</p>
                     </div>
 
-                    <div className="px-4 text-center">
-                      <span className="text-xl font-black text-slate-500">
-                        VS
-                      </span>
-                      <p className="text-[10px] text-slate-400 mt-1">
-                        {nextMatch.date}
-                      </p>
-                      <p className="text-[10px] font-bold text-slate-300">
-                        {nextMatch.time}
-                      </p>
-                    </div>
-
-                    <div className="text-center space-y-2 flex-1">
-                      <div className="w-14 h-14 mx-auto rounded-2xl bg-red-600/20 border border-red-500/30 flex items-center justify-center text-xl font-black text-red-400">
-                        {nextMatch.awayLogo || "AWY"}
-                      </div>
-                      <p className="text-sm font-bold text-slate-200">
-                        {nextMatch.awayTeam}
-                      </p>
-                    </div>
+                    <TeamBadge logo={cardMatch.awayLogo} name={cardMatch.awayTeam} tone="away" />
                   </div>
 
-                  {/* Venue & Squad info */}
-                  <div className="flex items-center justify-between text-xs text-slate-400 border-t border-slate-700/60 pt-4">
+                  {nextMatch?._dateObj ? (
+                    <MatchCountdown target={nextMatch._dateObj.toISOString()} />
+                  ) : (
+                    !nextMatch && (
+                      <p className="text-center text-xs text-slate-400">
+                        The next fixture will be announced soon.
+                      </p>
+                    )
+                  )}
+
+                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 border-t border-slate-700/60 pt-4">
                     <span>
                       Venue:{" "}
                       <span className="text-blue-400 font-semibold">
-                        {nextMatch.matchCenterUrl || "Boraitola Ground"}
+                        {cardMatch.matchCenterUrl || "Boraitola Ground"}
                       </span>
                     </span>
                     <span>
                       Squad:{" "}
                       <span className="text-blue-400 font-semibold">
-                        {nextMatch.squad?.length || 0}
+                        {cardMatch.squad?.length || 0}
                       </span>
                     </span>
+                    <Link
+                      href="/fixtures"
+                      className="font-semibold text-slate-200 hover:text-blue-400 transition-colors"
+                    >
+                      Match Details & Lineups →
+                    </Link>
                   </div>
                 </>
               ) : (
-                <div className="py-8 text-center text-sm text-slate-400">
-                  No upcoming match scheduled right now.
+                <div className="py-6 text-center text-sm text-slate-400">
+                  No matches scheduled yet. Check back soon.
                 </div>
               )}
-
-              {/* Action Button inside card */}
-
-              <div className="pt-2">
-                <Link href="/fixtures">
-                  <Button className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 rounded-xl py-3 text-sm font-medium transition-colors">
-                    Match Details & Lineups
-                  </Button>
-                </Link>
-              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

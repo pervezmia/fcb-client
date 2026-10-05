@@ -2,7 +2,8 @@
 
 export const navLinksPlayer = [
   { name: "Player Profile", href: "/dashboard/player" },
-  { name: "Create / Edit Player", href: "/dashboard/player/create" }
+  { name: "Create / Edit Player", href: "/dashboard/player/create" },
+  { name: "Leaderboard", href: "/leaderboard" },
 ];
 
 export const navLinksAdmin = [
@@ -10,6 +11,7 @@ export const navLinksAdmin = [
   { name: "Create Player", href: "/dashboard/player/create" },
   { name: "Manage Players", href: "/dashboard/admin/manage-user" },
   { name: "Create Fixture", href: "/dashboard/admin/fixture" },
+  { name: "Leaderboard", href: "/leaderboard" },
   { name: "Manage Fixtures", href: "/dashboard/admin/manage-fixtures" },
   { name: "Create Best Moments", href: "/dashboard/admin/create-best-moments" },
 ];

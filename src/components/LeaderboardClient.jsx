@@ -3,13 +3,12 @@
 import { authClient } from "@/lib/auth-client";
 import MyPositionCard from "./MyPositionCard";
 import Podium from "./Podium";
-import LeaderboardTable from "./LeaderboardTable";
+import TierTable from "./TierTable";
 
 export default function LeaderboardClient({ ranked }) {
   const { data: session, isPending } = authClient.useSession();
 
   const hasGoals = ranked.some((p) => Number(p.goals) > 0);
-  const hasAssists = ranked.some((p) => Number(p.assists) > 0);
 
   const me = session?.user
     ? ranked.find(
@@ -29,12 +28,7 @@ export default function LeaderboardClient({ ranked }) {
         isPending={isPending}
       />
       <Podium players={ranked.filter((p) => p.rank <= 3).slice(0, 3)} hasGoals={hasGoals} />
-      <LeaderboardTable
-        ranked={ranked}
-        meId={me?._id}
-        hasGoals={hasGoals}
-        hasAssists={hasAssists}
-      />
+      <TierTable ranked={ranked} />
     </div>
   );
 }
