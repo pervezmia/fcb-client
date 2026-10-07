@@ -17,7 +17,7 @@ export default function Footer() {
     { name: "Home", href: "/" },
     { name: "Fixtures", href: "/fixtures" },
     { name: "Players", href: "/players" },
-    { name: "Tables", href: "/tables" },
+    { name: "Leader Board", href: "/leaderboard" },
     { name: "About Club", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];

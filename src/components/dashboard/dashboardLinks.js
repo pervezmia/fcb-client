@@ -15,6 +15,7 @@ export const navLinksAdmin = [
   { name: "Manage Fixtures", href: "/dashboard/admin/manage-fixtures" },
   { name: "Create Best Moments", href: "/dashboard/admin/create-best-moments" },
   { name: "Manage Hero Slider", href: "/dashboard/admin/hero-images" },
+  { name: "Manage Contact Message", href: "/dashboard/admin/messages" },
   
 ];
 

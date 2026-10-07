@@ -17,3 +17,8 @@ input:-webkit-autofill:active {
     -webkit-text-fill-color: #ffffff !important; /* টেক্সটের কালার */
     transition: background-color 5000s ease-in-out 0s;
 }
+
+html,
+body {
+  background-color: #020617; /* slate-950 */
+}

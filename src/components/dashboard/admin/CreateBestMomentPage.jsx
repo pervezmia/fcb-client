@@ -14,6 +14,7 @@ import { ArrowLeft, FloppyDisk } from "@gravity-ui/icons";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { createBestMoment } from "@/lib/action/admin/createBestMoment";
+import { getAuthToken } from "@/lib/core/authToken";
 
 export default function CreateBestMomentPage() {
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,13 @@ export default function CreateBestMomentPage() {
     setLoading(true);
 
     try {
-      await createBestMoment(formData);
+      const token = await getAuthToken();
+      if (!token) {
+        toast.error("Session expired. Please login again.");
+        return;
+      }
+
+      await createBestMoment(formData, token);
       toast.success("Best moment created successfully!");
     } catch (err) {
       console.error(err);

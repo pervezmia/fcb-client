@@ -19,12 +19,12 @@ const navLinks = [
     href: "/fixtures",
   },
   {
-    name: "Dashboard",
-    href: "/dashboard/player",
-  },
-  {
     name: "Best Moments",
     href: "/best-moment",
+  },
+  {
+    name: "Dashboard",
+    href: "/dashboard/player",
   },
 ];
 
